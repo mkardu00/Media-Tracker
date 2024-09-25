@@ -1,0 +1,67 @@
+/* HomePage.css */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .home-container {
+    background-image: url('./assets/home.png'); /* URL tvoje pozadinske slike */
+    height: 100vh; 
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .content {
+    text-align: center;
+    color: white;
+    padding: 300px;
+    border-radius: 50px;
+  }
+  
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .btn {
+    padding: 15px 30px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .signup-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .signup-btn:hover {
+    background-color: #218838;
+  }
+  
+  .signin-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .signin-btn:hover {
+    background-color: #0056b3;
+  }
+  
