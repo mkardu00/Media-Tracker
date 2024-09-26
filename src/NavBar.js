@@ -14,7 +14,7 @@ const NavBar = () => {
         <nav>
           <ul>
             <li>
-              <Link to="/home">Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li>
               <Link to="/books">Books</Link>
@@ -32,7 +32,7 @@ const NavBar = () => {
         </nav>
 
         <Routes>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/books" element={<Books />} />
           <Route path="/video-games" element={<VideoGames />} />
           <Route path="/movies" element={<Movies />} />
