@@ -1,67 +1,174 @@
-/* HomePage.css */
+
 body, html {
-    height: 100%;
-    margin: 0;
-    font-family: Arial, sans-serif;
+  height: 100%;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  color: black; 
+}
+
+.home-container {
+  background-image: url('./assets/home.png');
+  height: 100vh; 
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; 
+  overflow: hidden; 
+}
+
+
+.home-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 1;
+}
+
+.content {
+  text-align: center;
+  z-index: 2; 
+  padding: 20px; 
+  border-radius: 15px; 
+  backdrop-filter: blur(5px); 
+}
+
+h1 {
+  font-size: 3.5rem; 
+  margin-bottom: 20px;
+  animation: fadeIn 1s; 
+}
+
+p {
+  font-size: 1.3rem; 
+  margin-bottom: 30px;
+  animation: fadeIn 1.2s; 
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.signup-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.signup-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px); 
+}
+
+.signin-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.signin-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px); 
+}
+
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
   }
-  
-  .home-container {
-    background-image: url('./assets/home.png');
-    height: 100vh; 
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  to {
+      opacity: 1;
+      transform: translateY(0);
   }
-  
-  .content {
-    text-align: center;
-    color: white;
-    padding: 300px;
-    border-radius: 50px;
+}
+
+
+.ReactModal__Overlay {
+  background: rgba(0, 0, 0, 0.75); 
+  z-index: 999; 
+}
+
+.ReactModal__Content {
+  width: 90%;
+  max-width: 400px; 
+  max-height: 400px; 
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px; 
+  background: #fff; 
+  color: #333; 
+  animation: slideIn 0.3s ease-in-out; 
+  position: relative; 
+  z-index: 1000; 
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(-50px);
+      opacity: 0;
   }
-  
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
+  to {
+      transform: translateY(0);
+      opacity: 1;
   }
-  
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-  }
-  
-  .buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .btn {
-    padding: 15px 30px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .signup-btn {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .signup-btn:hover {
-    background-color: #218838;
-  }
-  
-  .signin-btn {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .signin-btn:hover {
-    background-color: #0056b3;
-  }
-  
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px; 
+}
+
+input {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc; 
+  border-radius: 5px;
+  margin-bottom: 15px; 
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color 0.3s; 
+}
+
+button[type="submit"]:hover {
+  background-color: #036fe3;
+}
+
+button[type="close"] {
+  background-color: white;
+  color: black;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color 0.3s; 
+}
+
+button[type="close"]:hover {
+  background-color: rgb(224, 212, 212); 
+}

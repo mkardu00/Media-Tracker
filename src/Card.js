@@ -1,5 +1,5 @@
 import React from "react";
-import "./Card.css"; // Za stilizaciju (objasnit ću u nastavku)
+import "./Card.css";
 
 const Card = ({ title, description, author, image }) => {
   return (

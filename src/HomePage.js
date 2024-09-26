@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./HomePage.css"; // Stilovi za HomePage komponentu
+import "./HomePage.css";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +18,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const handleSignIn = (e) => {
-    e.preventDefault(); //kako se stranica nebi refresala
+    e.preventDefault();
     closeSignInModal();
     navigate("/books");
   };
@@ -31,9 +31,9 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
-      <div className="content">
+      <div className="content " style={{ color: "white" }}>
         <h1>Welcome to Media Tracker</h1>
-        <p>
+        <p color>
           Your journey starts here. Discover books, movies, tv shows and video
           games.
         </p>
@@ -53,7 +53,7 @@ const HomePage = () => {
         contentLabel="Sign In"
         style={{
           content: {
-            width: "300px",
+            width: "600px",
             margin: "auto",
             padding: "20px",
             textAlign: "center",
@@ -70,9 +70,13 @@ const HomePage = () => {
             <label>Password: </label>
             <input type="password" placeholder="Enter password" />
           </div>
-          <button type="submit">Submit</button>
+          <div className="modal-button-container">
+            <button type="submit">Submit</button>
+            <button type="close" onClick={closeSignInModal}>
+              Close
+            </button>
+          </div>
         </form>
-        <button onClick={closeSignInModal}>Close</button>
       </Modal>
 
       {/* Sign Up Modal */}
@@ -82,7 +86,7 @@ const HomePage = () => {
         contentLabel="Sign Up"
         style={{
           content: {
-            width: "300px",
+            width: "600px",
             margin: "auto",
             padding: "20px",
             textAlign: "center",
@@ -103,9 +107,13 @@ const HomePage = () => {
             <label>Password: </label>
             <input type="password" placeholder="Enter password" />
           </div>
-          <button type="submit">Submit</button>
+          <div className="modal-button-container">
+            <button type="submit">Submit</button>
+            <button type="close" onClick={closeSignUpModal}>
+              Close
+            </button>
+          </div>
         </form>
-        <button onClick={closeSignUpModal}>Close</button>
       </Modal>
     </div>
   );

@@ -1,45 +1,61 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import Books from "./Books";
-import VideoGames from "./VideoGames";
-import Movies from "./Movies";
-import TVShows from "./TVShows";
-import HomePage from "./HomePage";
+import { Link, useLocation } from "react-router-dom";
+
 import "./NavBar.css";
 
 const NavBar = () => {
+  const location = useLocation();
+  const isHomePage = location && location.pathname === "/";
+
   return (
-    <Router>
-      <div>
+    <div>
+      {!isHomePage && (
         <nav>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link
+                to="/"
+                className={location.pathname === "/" ? "active" : ""}
+              >
+                Home
+              </Link>
             </li>
             <li>
-              <Link to="/books">Books</Link>
+              <Link
+                to="/books"
+                className={location.pathname === "/books" ? "active" : ""}
+              >
+                Books
+              </Link>
             </li>
             <li>
-              <Link to="/video-games">Video Games</Link>
+              <Link
+                to="/video-games"
+                className={location.pathname === "/video-games" ? "active" : ""}
+              >
+                Video Games
+              </Link>
             </li>
             <li>
-              <Link to="/movies">Movies</Link>
+              <Link
+                to="/movies"
+                className={location.pathname === "/movies" ? "active" : ""}
+              >
+                Movies
+              </Link>
             </li>
             <li>
-              <Link to="/tv-shows">TV Shows</Link>
+              <Link
+                to="/tv-shows"
+                className={location.pathname === "/tv-shows" ? "active" : ""}
+              >
+                TV Shows
+              </Link>
             </li>
           </ul>
         </nav>
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/video-games" element={<VideoGames />} />
-          <Route path="/movies" element={<Movies />} />
-          <Route path="/tv-shows" element={<TVShows />} />
-        </Routes>
-      </div>
-    </Router>
+      )}
+    </div>
   );
 };
 

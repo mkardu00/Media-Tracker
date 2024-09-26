@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 
 const BooksTabs = () => {
-  // Definiramo stanje za aktivni tab
   const [activeTab, setActiveTab] = useState("wantToRead");
 
-  // Funkcija za postavljanje aktivnog taba
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
 
   return (
     <div>
-      {/* Navigacija za tabove */}
       <div className="tab-navigation">
         <button
           className={activeTab === "wantToRead" ? "active" : ""}
@@ -33,7 +30,6 @@ const BooksTabs = () => {
         </button>
       </div>
 
-      {/* Prikaz sadržaja tabova */}
       <div className="tab-content">
         {activeTab === "wantToRead" && (
           <div>
