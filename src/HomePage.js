@@ -6,6 +6,12 @@ import { useNavigate } from "react-router-dom";
 Modal.setAppElement("#root");
 
 const HomePage = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [error, setError] = useState("");
+
   const [isSignInOpen, setSignInOpen] = useState(false);
   const [isSignUpOpen, setSignUpOpen] = useState(false);
 
@@ -14,6 +20,8 @@ const HomePage = () => {
 
   const openSignUpModal = () => setSignUpOpen(true);
   const closeSignUpModal = () => setSignUpOpen(false);
+
+  const currentUser = localStorage.getItem("currentUser");
 
   const navigate = useNavigate();
 
@@ -25,8 +33,22 @@ const HomePage = () => {
 
   const handleSignUp = (e) => {
     e.preventDefault();
+    const userData = {
+      name: name,
+      email: email,
+      password: password,
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPasswordConfirm("");
+
+    alert("Podaci su uspješno spremljeni u local storageu!");
+    localStorage.setItem("currentUser", name);
     closeSignUpModal();
-    navigate("/video-games");
+    navigate("/books");
   };
 
   return (
@@ -97,15 +119,35 @@ const HomePage = () => {
         <form onSubmit={handleSignUp}>
           <div>
             <label>Name: </label>
-            <input type="text" placeholder="Enter name" />
+            <input
+              type="text"
+              placeholder="Enter name"
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
           <div>
             <label>Email: </label>
-            <input type="email" placeholder="Enter email" />
+            <input
+              type="email"
+              placeholder="Enter email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div>
             <label>Password: </label>
-            <input type="password" placeholder="Enter password" />
+            <input
+              type="password"
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Password confirm: </label>
+            <input
+              type="password"
+              placeholder="Enter password"
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
           </div>
           <div className="modal-button-container">
             <button type="submit">Submit</button>

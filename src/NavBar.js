@@ -6,6 +6,7 @@ import "./NavBar.css";
 const NavBar = () => {
   const location = useLocation();
   const isHomePage = location && location.pathname === "/";
+  const currentUser = localStorage.getItem("currentUser");
 
   return (
     <div>
@@ -52,6 +53,12 @@ const NavBar = () => {
                 TV Shows
               </Link>
             </li>
+
+            {currentUser && (
+              <li>
+                <Link>Hello, {currentUser}</Link>
+              </li>
+            )}
           </ul>
         </nav>
       )}

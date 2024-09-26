@@ -7,6 +7,7 @@ import VideoGames from "./VideoGames";
 import Movies from "./Movies";
 import TVShows from "./TVShows";
 import HomePage from "./HomePage";
+import PrivateRoute from "./PrivateRoute";
 import "./NavBar.css";
 
 function App() {
@@ -16,10 +17,38 @@ function App() {
         <NavBar></NavBar>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/video-games" element={<VideoGames />} />
-          <Route path="/movies" element={<Movies />} />
-          <Route path="/tv-shows" element={<TVShows />} />
+          <Route
+            path="/books"
+            element={
+              <PrivateRoute>
+                <Books />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/video-games"
+            element={
+              <PrivateRoute>
+                <VideoGames />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/movies"
+            element={
+              <PrivateRoute>
+                <Movies />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/tv-shows"
+            element={
+              <PrivateRoute>
+                <TVShows />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </div>

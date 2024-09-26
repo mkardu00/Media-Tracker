@@ -2,7 +2,6 @@ import Card from "./Card";
 import BooksTabs from "./BooksTabs";
 import harryPotterImg from "./assets/harry-potter.png";
 import "./Tabs.css";
-
 const Books = () => {
   return (
     <div>
