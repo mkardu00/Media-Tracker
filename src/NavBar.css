@@ -1,12 +1,12 @@
-
 nav {
-    background-color: #222; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    background-color: #333; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     position: fixed; 
     width: 100%;
     top: 0;
     z-index: 1000;
-    padding: 10px 0; 
+    padding: 15px 0; 
+    font-family: 'Roboto', sans-serif; 
 }
 
 nav ul {
@@ -18,31 +18,64 @@ nav ul {
     padding: 0;
 }
 
-
 nav ul li {
     margin: 0 10px; 
 }
 
-
 nav ul li a {
     color: white;
     text-decoration: none;
-    font-size: 1.1rem; 
+    font-size: 1.2rem; 
     padding: 10px 20px; 
     border-radius: 10px; 
     transition: background-color 0.3s ease, transform 0.2s ease; 
 }
-
 
 nav ul li a:hover {
     background-color: #575757; 
     transform: scale(1.05); 
 }
 
-
 nav ul li a.active {
     background-color: #007bff; 
     color: white;
+}
+
+.greeting {
+    color: white; 
+    border-radius: 10px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-left: 10px;
+}
+
+.sign-out-button {
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sign-out-button:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
