@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./HomePage.css";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ const HomePage = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState("");
-
+  const [signupSuccessful, setSignupSuccessful] = useState(false);
   const [isSignInOpen, setSignInOpen] = useState(false);
   const [isSignUpOpen, setSignUpOpen] = useState(false);
 
@@ -19,11 +19,44 @@ const HomePage = () => {
   const closeSignInModal = () => setSignInOpen(false);
 
   const openSignUpModal = () => setSignUpOpen(true);
-  const closeSignUpModal = () => setSignUpOpen(false);
+  const closeSignUpModal = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPasswordConfirm("");
+    setError("");
+    setSignUpOpen(false);
+  };
 
   const currentUser = localStorage.getItem("currentUser");
 
   const navigate = useNavigate();
+
+  function isPasswordValid() {
+    let isValid = true;
+    if (password.length < 9) {
+      isValid = false;
+      setError("Password is to short");
+    } else if (password.length > 20) {
+      isValid = false;
+      setError("Password is to long");
+    } else if (password.search(/\d/) === -1) {
+      isValid = false;
+      setError("Password must contain at least one number");
+    } else if (password.search(/[A-Z]/) === -1) {
+      isValid = false;
+      setError("Password must contain at least one uppercase letter");
+    } else if (password.search(/[a-z]/) === -1) {
+      isValid = false;
+      setError("Password must contain at least one lower letter");
+    } else if (password.search(/[!@#$%^&*]/) === -1) {
+      isValid = false;
+      setError(
+        "Password must contain at least one special characters like !@#$%^&*"
+      );
+    }
+    return isValid;
+  }
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -32,27 +65,52 @@ const HomePage = () => {
   };
 
   const handleSignUp = (e) => {
+    console.log("handle submit");
     e.preventDefault();
-    const userData = {
-      name: name,
-      email: email,
-      password: password,
-    };
 
-    localStorage.setItem("user", JSON.stringify(userData));
-    setName("");
-    setEmail("");
-    setPassword("");
-    setPasswordConfirm("");
+    setError("");
 
-    alert("Podaci su uspješno spremljeni u local storageu!");
+    if (!email || !password || !passwordConfirm) {
+      return setError("Please enter all required fields");
+    } else if (password !== passwordConfirm) {
+      return setError("Passwords do not match");
+    }
+    if (!isPasswordValid()) {
+      return;
+    }
+
+    setError("");
+    let userData = localStorage.getItem("userData");
+    console.log("userData");
+
+    if (!userData) {
+      userData = {};
+      userData[email] = {
+        name: name,
+        password: password,
+        books: {},
+        movies: {},
+        tvShows: {},
+        videoGames: {},
+      };
+      localStorage.setItem("userData", JSON.stringify(userData));
+    } else {
+      let userDataObj = JSON.parse(userData);
+      if (userDataObj[email]) {
+        return setError("Email already in use");
+      }
+      userDataObj[email] = { password: password, contacts: {} };
+      localStorage.setItem("userData", JSON.stringify(userDataObj));
+    }
+    setSignupSuccessful(true);
     localStorage.setItem("currentUser", name);
-    closeSignUpModal();
-    navigate("/books");
   };
 
   return (
     <div className="home-container">
+      {useEffect(() => {
+        currentUser && navigate("/books");
+      })}
       <div className="content " style={{ color: "white" }}>
         <h1>Welcome to Media Tracker</h1>
         <p color>
@@ -137,6 +195,7 @@ const HomePage = () => {
             <label>Password: </label>
             <input
               type="password"
+              value={password}
               placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -145,6 +204,7 @@ const HomePage = () => {
             <label>Password confirm: </label>
             <input
               type="password"
+              value={passwordConfirm}
               placeholder="Enter password"
               onChange={(e) => setPasswordConfirm(e.target.value)}
             />
@@ -154,7 +214,11 @@ const HomePage = () => {
             <button type="close" onClick={closeSignUpModal}>
               Close
             </button>
+            {useEffect(() => {
+              signupSuccessful && navigate("/books");
+            })}
           </div>
+          {error && <p>{error}</p>}
         </form>
       </Modal>
     </div>
