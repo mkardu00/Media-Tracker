@@ -84,7 +84,6 @@
   }
   
   .tab-panel ul li::before {
-    content: "📚"; 
     margin-right: 10px;
     font-size: 1.5rem;
   }

@@ -44,13 +44,17 @@ function App() {
           toWatch: ["Chernobyl", "Westworld", "True Detective"],
         },
         videoGames: {
-          favorites: [
+          wantToPlay: [
             "The Witcher 3",
             "Red Dead Redemption 2",
             "The Last of Us",
           ],
           currentlyPlaying: ["Cyberpunk 2077", "Hades", "Hollow Knight"],
-          toPlay: ["Elden Ring", "Ghost of Tsushima", "Horizon Zero Dawn"],
+          alreadyPlayed: [
+            "Elden Ring",
+            "Ghost of Tsushima",
+            "Horizon Zero Dawn",
+          ],
         },
       },
       "user2@example.com": {

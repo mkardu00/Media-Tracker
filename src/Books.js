@@ -47,9 +47,9 @@ const Books = () => {
       setCurrentBookIndex((prevIndex) =>
         prevIndex === booksData.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // mijenjanje knjiga svakih 3 sekunde
+    }, 3000);
 
-    return () => clearInterval(interval); // čišćenje intervala kada se komponenta uništi
+    return () => clearInterval(interval);
   }, []);
 
   const currentBook = booksData[currentBookIndex];
