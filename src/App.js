@@ -13,8 +13,8 @@ import "./NavBar.css";
 function App() {
   useEffect(() => {
     const userData = {
-      "user1@example.com": {
-        name: "John Doe",
+      "user1@gmail.com": {
+        name: "John",
         password: "password123A@",
         books: {
           wantToRead: [
@@ -57,8 +57,8 @@ function App() {
           ],
         },
       },
-      "user2@example.com": {
-        name: "Jane Smith",
+      "user2@gmail.com": {
+        name: "Jane",
         password: "securepassword456A@",
         books: {
           wantToRead: ["The Road", "Dune", "Fahrenheit 451"],
@@ -80,17 +80,17 @@ function App() {
           toWatch: ["Better Call Saul", "Fargo", "Mindhunter"],
         },
         videoGames: {
-          favorites: ["Animal Crossing", "Stardew Valley", "Celeste"],
+          wantToPlay: ["Animal Crossing", "Stardew Valley", "Celeste"],
           currentlyPlaying: ["Among Us", "Fall Guys", "Overwatch"],
-          toPlay: [
+          alreadyPlayed: [
             "Ori and the Blind Forest",
             "Cuphead",
             "The Legend of Zelda: Breath of the Wild",
           ],
         },
       },
-      "user3@example.com": {
-        name: "Bob Johnson",
+      "user3@gmail.com": {
+        name: "Bob",
         password: "password789A@",
         books: {
           wantToRead: [
@@ -120,9 +120,9 @@ function App() {
           toWatch: ["The Expanse", "Dark", "The Man in the High Castle"],
         },
         videoGames: {
-          favorites: ["Minecraft", "Fortnite", "League of Legends"],
+          wantToPlay: ["Minecraft", "Fortnite", "League of Legends"],
           currentlyPlaying: ["Valorant", "Apex Legends", "Genshin Impact"],
-          toPlay: ["Doom Eternal", "Resident Evil Village", "Control"],
+          alreadyPlayed: ["Doom Eternal", "Resident Evil Village", "Control"],
         },
       },
     };
