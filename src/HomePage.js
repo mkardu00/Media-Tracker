@@ -113,7 +113,7 @@ const HomePage = () => {
       userData[email] = {
         name: name,
         password: password,
-        books: {},
+        books: { wantToRead: [], reading: [], read: [] },
         movies: {},
         tvShows: {},
         videoGames: {},
@@ -124,7 +124,14 @@ const HomePage = () => {
       if (userDataObj[email]) {
         return setError("Email already in use");
       }
-      userDataObj[email] = { password: password, contacts: {} };
+      userDataObj[email] = {
+        name: name,
+        password: password,
+        books: { wantToRead: [], reading: [], read: [] },
+        movies: {},
+        tvShows: {},
+        videoGames: {},
+      };
       localStorage.setItem("userData", JSON.stringify(userDataObj));
     }
     setSignupSuccessful(true);

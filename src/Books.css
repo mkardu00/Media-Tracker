@@ -1,0 +1,46 @@
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  .carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .card-container {
+    display: none; 
+  }
+  
+  .carousel-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .carousel-controls button {
+    border: none;
+    background-color: #ddd;
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+  }
+  
+  .carousel-controls button.active {
+    background-color: #333;
+    color: white;
+  }
+  
+  .carousel-controls button:hover {
+    background-color: #999;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
