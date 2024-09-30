@@ -12,11 +12,19 @@ const HomePage = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState("");
   const [signupSuccessful, setSignupSuccessful] = useState(false);
+  const [signeinSuccessful, setSigneinSuccessful] = useState(false);
   const [isSignInOpen, setSignInOpen] = useState(false);
   const [isSignUpOpen, setSignUpOpen] = useState(false);
 
   const openSignInModal = () => setSignInOpen(true);
-  const closeSignInModal = () => setSignInOpen(false);
+  const closeSignInModal = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPasswordConfirm("");
+    setError("");
+    setSignInOpen(false);
+  };
 
   const openSignUpModal = () => setSignUpOpen(true);
   const closeSignUpModal = () => {
@@ -59,13 +67,31 @@ const HomePage = () => {
   }
 
   const handleSignIn = (e) => {
+    console.log("handle signe in");
     e.preventDefault();
-    closeSignInModal();
-    navigate("/books");
+    setError("");
+    if (!email || !password) {
+      return setError("Please enter email and password");
+    } else {
+      setError("");
+      let userData = localStorage.getItem("userData");
+
+      if (!userData) {
+        return setError("User does not exist");
+      } else {
+        let userDataObj = JSON.parse(userData);
+        if (!userData || !userDataObj[email]) {
+          return setError("Incorrect email");
+        } else if (userDataObj[email]["password"] !== password) {
+          return setError("Incorrect password");
+        }
+      }
+      localStorage.setItem("currentUser", email);
+      setSigneinSuccessful(true);
+    }
   };
 
   const handleSignUp = (e) => {
-    console.log("handle submit");
     e.preventDefault();
 
     setError("");
@@ -81,7 +107,6 @@ const HomePage = () => {
 
     setError("");
     let userData = localStorage.getItem("userData");
-    console.log("userData");
 
     if (!userData) {
       userData = {};
@@ -103,7 +128,7 @@ const HomePage = () => {
       localStorage.setItem("userData", JSON.stringify(userDataObj));
     }
     setSignupSuccessful(true);
-    localStorage.setItem("currentUser", name);
+    localStorage.setItem("currentUser", email);
   };
 
   return (
@@ -141,20 +166,32 @@ const HomePage = () => {
         }}
       >
         <h2>Sign In</h2>
+        {error && <p>{error}</p>}
         <form onSubmit={handleSignIn}>
           <div>
             <label>Email: </label>
-            <input type="email" placeholder="Enter email" />
+            <input
+              type="email"
+              placeholder="Enter email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div>
             <label>Password: </label>
-            <input type="password" placeholder="Enter password" />
+            <input
+              type="password"
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <div className="modal-button-container">
             <button type="submit">Submit</button>
             <button type="close" onClick={closeSignInModal}>
               Close
             </button>
+            {useEffect(() => {
+              signeinSuccessful && navigate("/books");
+            })}
           </div>
         </form>
       </Modal>
@@ -175,6 +212,7 @@ const HomePage = () => {
       >
         <h2>Sign Up</h2>
         <form onSubmit={handleSignUp}>
+          {error && <p>{error}</p>}
           <div>
             <label>Name: </label>
             <input
@@ -218,7 +256,6 @@ const HomePage = () => {
               signupSuccessful && navigate("/books");
             })}
           </div>
-          {error && <p>{error}</p>}
         </form>
       </Modal>
     </div>
