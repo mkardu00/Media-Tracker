@@ -41,9 +41,10 @@ const BooksTabs = () => {
         >
           <h2>Books I Want to Read</h2>
           <ul>
-            {userBooksObj.wantToRead.map((book, index) => (
-              <li key={index}>📚 {book}</li>
-            ))}
+            {Object.keys(userBooksObj).length !== 0 &&
+              userBooksObj.wantToRead.map((book, index) => (
+                <li key={index}>📚 {book}</li>
+              ))}
           </ul>
         </div>
 
@@ -52,9 +53,10 @@ const BooksTabs = () => {
         >
           <h2>Currently Reading</h2>
           <ul>
-            {userBooksObj.reading.map((book, index) => (
-              <li key={index}>📚 {book}</li>
-            ))}
+            {Object.keys(userBooksObj).length !== 0 &&
+              userBooksObj.reading.map((book, index) => (
+                <li key={index}>📚 {book}</li>
+              ))}
           </ul>
         </div>
 
@@ -63,9 +65,10 @@ const BooksTabs = () => {
         >
           <h2>Books I've Read</h2>
           <ul>
-            {userBooksObj.read.map((book, index) => (
-              <li key={index}>📚 {book}</li>
-            ))}
+            {Object.keys(userBooksObj).length !== 0 &&
+              userBooksObj.read.map((book, index) => (
+                <li key={index}>📚 {book}</li>
+              ))}
           </ul>
         </div>
       </div>

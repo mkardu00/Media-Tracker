@@ -134,6 +134,7 @@ const HomePage = () => {
       };
       localStorage.setItem("userData", JSON.stringify(userDataObj));
     }
+
     setSignupSuccessful(true);
     localStorage.setItem("currentUser", email);
   };

@@ -41,9 +41,10 @@ const MoviesTabs = () => {
         >
           <h2> Favorite Movies</h2>
           <ul>
-            {userMoviesObj.favorites.map((movie, index) => (
-              <li key={index}>🎬 {movie}</li>
-            ))}
+            {Object.keys(userMoviesObj).length !== 0 &&
+              userMoviesObj.favorites.map((movie, index) => (
+                <li key={index}>🎬 {movie}</li>
+              ))}
           </ul>
         </div>
 
@@ -54,9 +55,10 @@ const MoviesTabs = () => {
         >
           <h2> Movies I Have Watched</h2>
           <ul>
-            {userMoviesObj.recentlyWatched.map((movie, index) => (
-              <li key={index}>🎬 {movie}</li>
-            ))}
+            {Object.keys(userMoviesObj).length !== 0 &&
+              userMoviesObj.recentlyWatched.map((movie, index) => (
+                <li key={index}>🎬 {movie}</li>
+              ))}
           </ul>
         </div>
 
@@ -65,9 +67,10 @@ const MoviesTabs = () => {
         >
           <h2> Movies I Would Like to Watch</h2>
           <ul>
-            {userMoviesObj.toWatch.map((movie, index) => (
-              <li key={index}>🎬 {movie}</li>
-            ))}
+            {Object.keys(userMoviesObj).length !== 0 &&
+              userMoviesObj.toWatch.map((movie, index) => (
+                <li key={index}>🎬 {movie}</li>
+              ))}
           </ul>
         </div>
       </div>

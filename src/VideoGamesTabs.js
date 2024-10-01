@@ -9,6 +9,7 @@ const VideoGamesTabs = () => {
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
+  console.log("Objekt", userGamesObj);
 
   return (
     <div className="tabs-container">
@@ -41,9 +42,10 @@ const VideoGamesTabs = () => {
         >
           <h2>The video games I want to play</h2>
           <ul>
-            {userGamesObj.wantToPlay.map((game, index) => (
-              <li key={index}>🎮 {game}</li>
-            ))}
+            {Object.keys(userGamesObj).length !== 0 &&
+              userGamesObj.wantToPlay.map((game, index) => (
+                <li key={index}>🎮 {game}</li>
+              ))}
           </ul>
         </div>
 
@@ -54,9 +56,10 @@ const VideoGamesTabs = () => {
         >
           <h2>The video games I am currently playing</h2>
           <ul>
-            {userGamesObj.currentlyPlaying.map((game, index) => (
-              <li key={index}>🎮 {game}</li>
-            ))}
+            {Object.keys(userGamesObj).length !== 0 &&
+              userGamesObj.currentlyPlaying.map((game, index) => (
+                <li key={index}>🎮 {game}</li>
+              ))}
           </ul>
         </div>
 
@@ -67,9 +70,10 @@ const VideoGamesTabs = () => {
         >
           <h2>The video games I have already played</h2>
           <ul>
-            {userGamesObj.alreadyPlayed.map((game, index) => (
-              <li key={index}>🎮 {game}</li>
-            ))}
+            {Object.keys(userGamesObj).length !== 0 &&
+              userGamesObj.alreadyPlayed.map((game, index) => (
+                <li key={index}>🎮 {game}</li>
+              ))}
           </ul>
         </div>
       </div>

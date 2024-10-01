@@ -41,9 +41,10 @@ const TVShowsTabs = () => {
         >
           <h2> The TV shows I have watched</h2>
           <ul>
-            {userShowsObj.recentlyWatched.map((show, index) => (
-              <li key={index}>📺 {show}</li>
-            ))}
+            {Object.keys(userShowsObj).length !== 0 &&
+              userShowsObj.recentlyWatched.map((show, index) => (
+                <li key={index}>📺 {show}</li>
+              ))}
           </ul>
         </div>
 
@@ -54,9 +55,10 @@ const TVShowsTabs = () => {
         >
           <h2> The TV shows I am currently watching</h2>
           <ul>
-            {userShowsObj.currentlyWatching.map((show, index) => (
-              <li key={index}>📺 {show}</li>
-            ))}
+            {Object.keys(userShowsObj).length !== 0 &&
+              userShowsObj.currentlyWatching.map((show, index) => (
+                <li key={index}>📺 {show}</li>
+              ))}
           </ul>
         </div>
 
@@ -65,9 +67,10 @@ const TVShowsTabs = () => {
         >
           <h2> The TV shows I would like to watch.</h2>
           <ul>
-            {userShowsObj.toWatch.map((show, index) => (
-              <li key={index}>📺 {show}</li>
-            ))}
+            {Object.keys(userShowsObj).length !== 0 &&
+              userShowsObj.toWatch.map((show, index) => (
+                <li key={index}>📺 {show}</li>
+              ))}
           </ul>
         </div>
       </div>
