@@ -39,7 +39,11 @@ function App() {
           toWatch: ["Fight Club", "The Godfather", "Forrest Gump"],
         },
         tvShows: {
-          favorites: ["Breaking Bad", "Game of Thrones", "Stranger Things"],
+          recentlyWatched: [
+            "Breaking Bad",
+            "Game of Thrones",
+            "Stranger Things",
+          ],
           currentlyWatching: ["The Witcher", "The Mandalorian", "Loki"],
           toWatch: ["Chernobyl", "Westworld", "True Detective"],
         },
@@ -71,7 +75,7 @@ function App() {
           toWatch: ["The Irishman", "Moonlight", "A Star is Born"],
         },
         tvShows: {
-          favorites: ["The Crown", "The Office", "Parks and Recreation"],
+          recentlyWatched: ["The Crown", "The Office", "Parks and Recreation"],
           currentlyWatching: [
             "The Queen’s Gambit",
             "Schitt’s Creek",
@@ -115,7 +119,7 @@ function App() {
           ],
         },
         tvShows: {
-          favorites: ["Silicon Valley", "Mr. Robot", "Black Mirror"],
+          recentlyWatched: ["Silicon Valley", "Mr. Robot", "Black Mirror"],
           currentlyWatching: ["Billions", "Suits", "The Boys"],
           toWatch: ["The Expanse", "Dark", "The Man in the High Castle"],
         },
