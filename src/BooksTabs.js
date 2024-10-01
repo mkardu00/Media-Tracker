@@ -6,8 +6,27 @@ const BooksTabs = () => {
   let userData = JSON.parse(localStorage.getItem("userData"));
   const userBooksObj = userData[currentUser]["books"];
   const [activeTab, setActiveTab] = useState("wantToRead");
+
+  const [newBook, setNewBook] = useState("");
+  const [bookType, setBookType] = useState("wantToRead");
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
+  };
+
+  const handleAddBook = () => {
+    if (newBook.trim() !== "") {
+      userBooksObj[bookType].push(newBook);
+      localStorage.setItem("userData", JSON.stringify(userData));
+      setNewBook("");
+    }
+  };
+
+  const handleDeleteBook = (book) => {
+    const updatedBooks = userBooksObj[activeTab].filter((b) => b !== book);
+    userBooksObj[activeTab] = updatedBooks;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setActiveTab(activeTab);
   };
 
   return (
@@ -43,7 +62,15 @@ const BooksTabs = () => {
           <ul>
             {Object.keys(userBooksObj).length !== 0 &&
               userBooksObj.wantToRead.map((book, index) => (
-                <li key={index}>📚 {book}</li>
+                <li key={index}>
+                  📚 {book}{" "}
+                  <button
+                    onClick={() => handleDeleteBook(book)}
+                    className="delete-button"
+                  >
+                    ❌
+                  </button>
+                </li>
               ))}
           </ul>
         </div>
@@ -55,7 +82,15 @@ const BooksTabs = () => {
           <ul>
             {Object.keys(userBooksObj).length !== 0 &&
               userBooksObj.reading.map((book, index) => (
-                <li key={index}>📚 {book}</li>
+                <li key={index}>
+                  📚 {book}{" "}
+                  <button
+                    onClick={() => handleDeleteBook(book)}
+                    className="delete-button"
+                  >
+                    ❌
+                  </button>
+                </li>
               ))}
           </ul>
         </div>
@@ -67,10 +102,32 @@ const BooksTabs = () => {
           <ul>
             {Object.keys(userBooksObj).length !== 0 &&
               userBooksObj.read.map((book, index) => (
-                <li key={index}>📚 {book}</li>
+                <li key={index}>
+                  📚 {book}{" "}
+                  <button
+                    onClick={() => handleDeleteBook(book)}
+                    className="delete-button"
+                  >
+                    ❌
+                  </button>
+                </li>
               ))}
           </ul>
         </div>
+      </div>
+      <div className="add-book">
+        <input
+          type="text"
+          value={newBook}
+          onChange={(e) => setNewBook(e.target.value)}
+          placeholder="Enter book title"
+        />
+        <select onChange={(e) => setBookType(e.target.value)} value={bookType}>
+          <option value="wantToRead">Want to Read</option>
+          <option value="reading">Reading</option>
+          <option value="read">Read</option>
+        </select>
+        <button onClick={handleAddBook}>Add Book</button>
       </div>
     </div>
   );

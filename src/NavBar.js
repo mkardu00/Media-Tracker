@@ -19,14 +19,7 @@ const NavBar = () => {
       {!isHomePage && (
         <nav>
           <ul>
-            <li>
-              <Link
-                to="/"
-                className={location.pathname === "/" ? "active" : ""}
-              >
-                Home
-              </Link>
-            </li>
+            <li></li>
             <li>
               <Link
                 to="/books"
