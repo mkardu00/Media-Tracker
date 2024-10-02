@@ -1,6 +1,6 @@
 
 nav {
-    background-color: #333; 
+    background-color: #073750; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     width: 100%;
     top: 0;
@@ -58,7 +58,7 @@ nav ul li a:hover {
 
 
 nav ul li a.active {
-    background-color: #007bff;
+    background-color: #25c29a;
     color: white;
 }
 
@@ -95,7 +95,7 @@ nav ul li a.active {
 
 
 .sign-out-button {
-    background-color: #dc3545;
+    background-color: #e99118;
     color: white;
     border: none;
     padding: 10px 20px;

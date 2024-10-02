@@ -7,7 +7,7 @@ body, html {
 }
 
 .home-container {
-  background-image: url('./assets/home.png');
+  background-image: url('./assets/logo.png');
   height: 100vh; 
   background-position: center;
   background-repeat: no-repeat;
@@ -43,12 +43,14 @@ h1 {
   font-size: 3.5rem; 
   margin-bottom: 20px;
   animation: fadeIn 1s; 
+  color: #f6f9e3;
 }
 
 p {
   font-size: 1.3rem; 
   margin-bottom: 30px;
   animation: fadeIn 1.2s; 
+  color: #f6f9e3;
 }
 
 .buttons {
@@ -68,22 +70,22 @@ p {
 }
 
 .signup-btn {
-  background-color: #28a745;
-  color: white;
+  background-color: #25c29a;
+  color: #073750;
 }
 
 .signup-btn:hover {
-  background-color: #218838;
+  background-color: #128d6e;
   transform: translateY(-2px); 
 }
 
 .signin-btn {
-  background-color: #007bff;
-  color: white;
+  background-color: #71a6a7;
+  color: #073750;
 }
 
 .signin-btn:hover {
-  background-color: #0056b3;
+  background-color: #28a1a3;
   transform: translateY(-2px); 
 }
 
