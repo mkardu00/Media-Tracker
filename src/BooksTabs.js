@@ -33,18 +33,10 @@ const BooksTabs = () => {
     setActiveTab(tabName);
   };
 
-  const handleAddBook = () => {
-    if (newBook.trim() !== "") {
-      userBooksObj[bookType].push(newBook);
-      localStorage.setItem("userData", JSON.stringify(userData));
-      setNewBook("");
-    }
-  };
-
   const handleAddBookFromSearch = (bookTitle) => {
-    userBooksObj[bookType].push(bookTitle);
+    userBooksObj[activeTab].push(bookTitle);
     localStorage.setItem("userData", JSON.stringify(userData));
-    alert(`Book "${bookTitle}" added to your ${bookType} list.`);
+    alert(`Book "${bookTitle}" added to your ${activeTab} list.`);
   };
 
   const handleDeleteBook = (book) => {
@@ -55,122 +47,118 @@ const BooksTabs = () => {
   };
 
   return (
-    <div className="tabs-container">
-      <div className="tab-navigation">
-        <button
-          className={activeTab === "wantToRead" ? "active" : ""}
-          onClick={() => handleTabClick("wantToRead")}
-        >
-          Want to Read
-        </button>
-        <button
-          className={activeTab === "reading" ? "active" : ""}
-          onClick={() => handleTabClick("reading")}
-        >
-          Reading
-        </button>
-        <button
-          className={activeTab === "read" ? "active" : ""}
-          onClick={() => handleTabClick("read")}
-        >
-          Read
-        </button>
+    <>
+      <div className="book-search">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search for a book..."
+        />
+        <button onClick={handleSearchBooks}>Search</button>
+        <ul>
+          {searchResults.map((book, index) => (
+            <li key={index}>
+              📚 {book.volumeInfo.title}{" "}
+              <button
+                onClick={() => handleAddBookFromSearch(book.volumeInfo.title)}
+              >
+                Add to {activeTab}
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div className="tab-content">
-        <div
-          className={
-            activeTab === "wantToRead" ? "tab-panel active" : "tab-panel"
-          }
-        >
-          <h2>Books I Want to Read</h2>
-          <ul>
-            {Object.keys(userBooksObj).length !== 0 &&
-              userBooksObj.wantToRead.map((book, index) => (
-                <li key={index}>
-                  📚 {book}{" "}
-                  <button
-                    onClick={() => handleDeleteBook(book)}
-                    className="delete-button"
-                  >
-                    ❌
-                  </button>
-                </li>
-              ))}
-          </ul>
+      <div className="tabs-container">
+        <div className="tab-navigation">
+          <button
+            className={activeTab === "wantToRead" ? "active" : ""}
+            onClick={() => handleTabClick("wantToRead")}
+          >
+            Want to Read
+          </button>
+          <button
+            className={activeTab === "reading" ? "active" : ""}
+            onClick={() => handleTabClick("reading")}
+          >
+            Reading
+          </button>
+          <button
+            className={activeTab === "read" ? "active" : ""}
+            onClick={() => handleTabClick("read")}
+          >
+            Read
+          </button>
         </div>
 
-        <div
-          className={activeTab === "reading" ? "tab-panel active" : "tab-panel"}
-        >
-          <h2>Currently Reading</h2>
-          <ul>
-            {Object.keys(userBooksObj).length !== 0 &&
-              userBooksObj.reading.map((book, index) => (
-                <li key={index}>
-                  📚 {book}{" "}
-                  <button
-                    onClick={() => handleDeleteBook(book)}
-                    className="delete-button"
-                  >
-                    ❌
-                  </button>
-                </li>
-              ))}
-          </ul>
-        </div>
+        <div className="tab-content">
+          <div
+            className={
+              activeTab === "wantToRead" ? "tab-panel active" : "tab-panel"
+            }
+          >
+            <h2>Books I Want to Read</h2>
+            <ul>
+              {Object.keys(userBooksObj).length !== 0 &&
+                userBooksObj.wantToRead.map((book, index) => (
+                  <li key={index}>
+                    📚 {book}{" "}
+                    <button
+                      onClick={() => handleDeleteBook(book)}
+                      className="delete-button"
+                    >
+                      ❌
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </div>
 
-        <div
-          className={activeTab === "read" ? "tab-panel active" : "tab-panel"}
-        >
-          <h2>Books I've Read</h2>
-          <ul>
-            {Object.keys(userBooksObj).length !== 0 &&
-              userBooksObj.read.map((book, index) => (
-                <li key={index}>
-                  📚 {book}{" "}
-                  <button
-                    onClick={() => handleDeleteBook(book)}
-                    className="delete-button"
-                  >
-                    ❌
-                  </button>
-                </li>
-              ))}
-          </ul>
+          <div
+            className={
+              activeTab === "reading" ? "tab-panel active" : "tab-panel"
+            }
+          >
+            <h2>Currently Reading</h2>
+            <ul>
+              {Object.keys(userBooksObj).length !== 0 &&
+                userBooksObj.reading.map((book, index) => (
+                  <li key={index}>
+                    📚 {book}{" "}
+                    <button
+                      onClick={() => handleDeleteBook(book)}
+                      className="delete-button"
+                    >
+                      ❌
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </div>
+
+          <div
+            className={activeTab === "read" ? "tab-panel active" : "tab-panel"}
+          >
+            <h2>Books I've Read</h2>
+            <ul>
+              {Object.keys(userBooksObj).length !== 0 &&
+                userBooksObj.read.map((book, index) => (
+                  <li key={index}>
+                    📚 {book}{" "}
+                    <button
+                      onClick={() => handleDeleteBook(book)}
+                      className="delete-button"
+                    >
+                      ❌
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
       </div>
-
-      <div className="add-book">
-        <select onChange={(e) => setBookType(e.target.value)} value={bookType}>
-          <option value="wantToRead">Want to Read</option>
-          <option value="reading">Reading</option>
-          <option value="read">Read</option>
-        </select>{" "}
-        <div className="book-search">
-          <h2>Search for books</h2>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for a book..."
-          />
-          <button onClick={handleSearchBooks}>Search</button>
-          <ul>
-            {searchResults.map((book, index) => (
-              <li key={index}>
-                📚 {book.volumeInfo.title}{" "}
-                <button
-                  onClick={() => handleAddBookFromSearch(book.volumeInfo.title)}
-                >
-                  Add to {bookType}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
