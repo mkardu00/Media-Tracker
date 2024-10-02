@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./BooksTabs.css";
 
 const BooksTabs = () => {
@@ -10,6 +11,24 @@ const BooksTabs = () => {
   const [newBook, setNewBook] = useState("");
   const [bookType, setBookType] = useState("wantToRead");
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const API_KEY = "AIzaSyCdzA_eB37gQSkL93HD-wmMeKIUM7fLeAk"; // API ključem
+
+  const handleSearchBooks = async () => {
+    if (searchQuery.trim() !== "") {
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&key=${API_KEY}`
+        );
+        setSearchResults(response.data.items || []);
+      } catch (error) {
+        console.error("Greška pri dohvaćanju knjiga:", error);
+      }
+    }
+  };
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
@@ -20,6 +39,12 @@ const BooksTabs = () => {
       localStorage.setItem("userData", JSON.stringify(userData));
       setNewBook("");
     }
+  };
+
+  const handleAddBookFromSearch = (bookTitle) => {
+    userBooksObj[bookType].push(bookTitle);
+    localStorage.setItem("userData", JSON.stringify(userData));
+    alert(`Book "${bookTitle}" added to your ${bookType} list.`);
   };
 
   const handleDeleteBook = (book) => {
@@ -115,19 +140,35 @@ const BooksTabs = () => {
           </ul>
         </div>
       </div>
+
       <div className="add-book">
-        <input
-          type="text"
-          value={newBook}
-          onChange={(e) => setNewBook(e.target.value)}
-          placeholder="Enter book title"
-        />
         <select onChange={(e) => setBookType(e.target.value)} value={bookType}>
           <option value="wantToRead">Want to Read</option>
           <option value="reading">Reading</option>
           <option value="read">Read</option>
-        </select>
-        <button onClick={handleAddBook}>Add Book</button>
+        </select>{" "}
+        <div className="book-search">
+          <h2>Search for books</h2>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for a book..."
+          />
+          <button onClick={handleSearchBooks}>Search</button>
+          <ul>
+            {searchResults.map((book, index) => (
+              <li key={index}>
+                📚 {book.volumeInfo.title}{" "}
+                <button
+                  onClick={() => handleAddBookFromSearch(book.volumeInfo.title)}
+                >
+                  Add to {bookType}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

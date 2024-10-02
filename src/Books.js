@@ -47,7 +47,7 @@ const Books = () => {
       setCurrentBookIndex((prevIndex) =>
         prevIndex === booksData.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
