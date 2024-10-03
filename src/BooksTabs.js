@@ -6,6 +6,7 @@ import BookDetails from "./BookDetails";
 const BooksTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
+
   const userBooksObj = userData[currentUser]?.books || {
     wantToRead: [],
     reading: [],
@@ -16,15 +17,20 @@ const BooksTabs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const [currentBooks, setCurrentBooks] = useState(
-    userBooksObj[activeTab] || []
-  );
+  const [currentBooks, setCurrentBooks] = useState(userBooksObj[activeTab]);
 
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+  console.log("API Key:", process.env.REACT_APP_GOOGLE_API_KEY);
 
   useEffect(() => {
-    setCurrentBooks(userBooksObj[activeTab] || []);
-  }, [activeTab, userBooksObj]);
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+    setCurrentBooks(userBooksObj[activeTab]);
+  }, [activeTab, currentUser]);
 
   const handleSearchBooks = async () => {
     if (searchQuery.trim() !== "") {
@@ -44,25 +50,45 @@ const BooksTabs = () => {
   };
 
   const handleAddBookFromSearch = (book) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
     const bookToAdd = {
       title: book.volumeInfo.title,
       bookId: book.id,
     };
+
     userBooksObj[activeTab].push(bookToAdd);
+    userData[currentUser].books = userBooksObj;
     localStorage.setItem("userData", JSON.stringify(userData));
+
     alert(`Book "${book.volumeInfo.title}" added to your ${activeTab} list.`);
+
     setSearchQuery("");
     setSearchResults([]);
     setCurrentBooks([...userBooksObj[activeTab]]);
   };
 
   const handleDeleteBook = (book) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
     const updatedBooks = userBooksObj[activeTab].filter(
       (b) => b.bookId !== book.bookId
     );
     userBooksObj[activeTab] = updatedBooks;
-    setCurrentBooks([...updatedBooks]);
+    userData[currentUser].books = userBooksObj;
     localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentBooks([...updatedBooks]);
   };
 
   const handleBookClick = (bookId) => {

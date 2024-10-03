@@ -21,7 +21,7 @@ const BookDetails = ({ bookId, onClose }) => {
     if (bookId) {
       fetchBookDetails();
     }
-  }, [bookId]);
+  }, [bookId, API_KEY]);
 
   if (!bookDetails) {
     return <div>Loading...</div>;
