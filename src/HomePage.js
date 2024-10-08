@@ -67,7 +67,6 @@ const HomePage = () => {
   }
 
   const handleSignIn = (e) => {
-    console.log("handle signe in");
     e.preventDefault();
     setError("");
     if (!email || !password) {
@@ -128,7 +127,7 @@ const HomePage = () => {
         name: name,
         password: password,
         books: { wantToRead: [], reading: [], read: [] },
-        movies: {},
+        movies: { favorites: [], recentlyWatched: [], toWatch: [] },
         tvShows: {},
         videoGames: {},
       };

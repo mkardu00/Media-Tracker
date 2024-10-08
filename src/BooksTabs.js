@@ -98,6 +98,7 @@ const BooksTabs = () => {
   const handleCloseBookDetails = () => {
     setSelectedBookId(null);
   };
+  console.log("BOOKS search", searchResults);
 
   return (
     <>

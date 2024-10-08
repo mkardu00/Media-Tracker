@@ -20,7 +20,13 @@ const NavBar = () => {
       {!isHomePage && (
         <nav>
           <div className="nav-left">
-            <img src={logoImg} alt="Logo" className="logo-img" />
+            <img
+              src={logoImg}
+              alt="Logo"
+              className="logo-img"
+              onClick={() => navigate("/userHome")}
+              style={{ cursor: "pointer" }}
+            />
             <ul>
               <li>
                 <Link

@@ -9,6 +9,7 @@ import TVShows from "./TVShows";
 import HomePage from "./HomePage";
 import PrivateRoute from "./PrivateRoute";
 import "./NavBar.css";
+import UserHome from "./UserHome";
 
 function App() {
   let userDataInLocalStorage = JSON.parse(localStorage.getItem("userData"));
@@ -150,6 +151,14 @@ function App() {
         <NavBar></NavBar>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route
+            path="/userHome"
+            element={
+              <PrivateRoute>
+                <UserHome />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/books"
             element={
