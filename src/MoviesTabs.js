@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Slider from "react-slick";
 import "./BooksTabs.css";
 import BookDetails from "./BookDetails";
 
@@ -18,6 +19,7 @@ const MoviesTabs = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [currentMovies, setCurrentMovies] = useState(userMoviesObj[activeTab]);
+  const [popularMovies, setPopularMovies] = useState([]);
 
   const API_KEY = process.env.REACT_APP_OMDB_API_KEY;
 
@@ -30,6 +32,21 @@ const MoviesTabs = () => {
     };
     setCurrentMovies(userMoviesObj[activeTab]);
   }, [activeTab, currentUser]);
+
+  useEffect(() => {
+    const fetchPopularMovies = async () => {
+      try {
+        const response = await axios.get(
+          `http://www.omdbapi.com/?apikey=${API_KEY}&s=christmas`
+        );
+        setPopularMovies(response.data.Search || []);
+      } catch (error) {
+        console.error("Greška pri dohvaćanju popularnih filmova:", error);
+      }
+    };
+
+    fetchPopularMovies();
+  }, []);
 
   const handleSearchMovies = async () => {
     if (searchQuery.trim() !== "") {
@@ -81,7 +98,7 @@ const MoviesTabs = () => {
     };
 
     const updatedMovies = userMoviesObj[activeTab].filter(
-      (b) => b.movieIdd !== movie.movieId
+      (b) => b.movieId !== movie.movieId
     );
     userMoviesObj[activeTab] = updatedMovies;
     userData[currentUser].movies = userMoviesObj;
@@ -98,6 +115,28 @@ const MoviesTabs = () => {
     setSelectedMovieId(null);
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <div className="book-search">
@@ -109,21 +148,32 @@ const MoviesTabs = () => {
         />
         <button onClick={handleSearchMovies}>Search</button>
         <ul>
-          <li>
-            📚 {searchResults.Title}
-            {console.log("ASDSAD", searchResults)}
-            <div className="book-buttons">
-              <button onClick={() => handleAddMovieFromSearch(searchResults)}>
-                Add to {activeTab}
-              </button>
-              <button onClick={() => handleMovieClick(searchResults.imdbID)}>
-                View Details
-              </button>
-            </div>
-          </li>
+          {searchResults.length !== 0 && (
+            <li>
+              📚 {searchResults.Title}
+              {console.log("ASDSAD", searchResults)}
+              <div className="book-buttons">
+                <button onClick={() => handleAddMovieFromSearch(searchResults)}>
+                  Add to {activeTab}
+                </button>
+                <button onClick={() => handleMovieClick(searchResults.imdbID)}>
+                  View Details
+                </button>
+              </div>
+            </li>
+          )}
         </ul>
       </div>
-
+      <div className="carousel-container">
+        <Slider {...settings}>
+          {popularMovies.map((movie) => (
+            <div key={movie.imdbID} className="carousel-item">
+              <img src={movie.Poster} alt={movie.Title} />
+              <h3>{movie.Title}</h3>
+            </div>
+          ))}
+        </Slider>
+      </div>
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
