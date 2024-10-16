@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./BooksTabs.css";
-import BookDetails from "./BookDetails";
+import MediaDetails from "./MediaDetails";
 
 const BooksTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -95,7 +95,7 @@ const BooksTabs = () => {
     setSelectedBookId(bookId);
   };
 
-  const handleCloseBookDetails = () => {
+  const handleCloseDetails = () => {
     setSelectedBookId(null);
   };
   console.log("BOOKS search", searchResults);
@@ -249,7 +249,11 @@ const BooksTabs = () => {
         </div>
       </div>
       {selectedBookId && (
-        <BookDetails bookId={selectedBookId} onClose={handleCloseBookDetails} />
+        <MediaDetails
+          mediaId={selectedBookId}
+          mediaType="book"
+          onClose={handleCloseDetails}
+        />
       )}
     </>
   );

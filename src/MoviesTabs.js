@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Slider from "react-slick";
 import "./BooksTabs.css";
-import BookDetails from "./BookDetails";
+import MediaDetails from "./MediaDetails";
 
 const MoviesTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -111,7 +111,7 @@ const MoviesTabs = () => {
     setSelectedMovieId(movieId);
   };
 
-  const handleCloseMovieDetails = () => {
+  const handleCloseDetails = () => {
     setSelectedMovieId(null);
   };
 
@@ -298,9 +298,10 @@ const MoviesTabs = () => {
         </div>
       </div>
       {selectedMovieId && (
-        <BookDetails
-          bookId={selectedMovieId}
-          onClose={handleCloseMovieDetails}
+        <MediaDetails
+          mediaId={selectedMovieId}
+          mediaType="movie"
+          onClose={handleCloseDetails}
         />
       )}
     </>
