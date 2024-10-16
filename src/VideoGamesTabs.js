@@ -1,83 +1,262 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./BooksTabs.css";
+import MediaDetails from "./MediaDetails";
 
 const VideoGamesTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
-  let userData = JSON.parse(localStorage.getItem("userData"));
-  const userGamesObj = userData[currentUser]["videoGames"];
+  let userData = JSON.parse(localStorage.getItem("userData")) || {};
+
+  const userGamesObj = userData[currentUser]?.games || {
+    wantToPlay: [],
+    playing: [],
+    played: [],
+  };
+
   const [activeTab, setActiveTab] = useState("wantToPlay");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedGameId, setSelectedGameId] = useState(null);
+  const [currentGames, setCurrentGames] = useState(userGamesObj[activeTab]);
+
+  const API_KEY = process.env.REACT_APP_RAWG_API_KEY;
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+    setCurrentGames(userGamesObj[activeTab]);
+  }, [activeTab, currentUser]);
+
+  const handleSearchGames = async () => {
+    if (searchQuery.trim() !== "") {
+      try {
+        const response = await axios.get(
+          `https://api.rawg.io/api/games?key=${API_KEY}&page_size=5&search=${searchQuery}`
+        );
+        setSearchResults(response.data.results || []);
+      } catch (error) {
+        console.error("Greška pri dohvaćanju video igara:", error);
+      }
+    }
+  };
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
-  console.log("Objekt", userGamesObj);
+
+  const handleAddGameFromSearch = (game) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
+    const gameToAdd = {
+      title: game.name,
+      gameId: game.id,
+    };
+
+    userGamesObj[activeTab].push(gameToAdd);
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    alert(`Game "${game.name}" added to your ${activeTab} list.`);
+
+    setSearchQuery("");
+    setSearchResults([]);
+    setCurrentGames([...userGamesObj[activeTab]]);
+  };
+
+  const handleDeleteGame = (game) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
+    const updatedGames = userGamesObj[activeTab].filter(
+      (g) => g.gameId !== game.gameId
+    );
+    userGamesObj[activeTab] = updatedGames;
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentGames([...updatedGames]);
+  };
+
+  const handleGameClick = (gameId) => {
+    setSelectedGameId(gameId);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedGameId(null);
+  };
 
   return (
-    <div className="tabs-container">
-      <div className="tab-navigation">
-        <button
-          className={activeTab === "wantToPlay" ? "active" : ""}
-          onClick={() => handleTabClick("wantToPlay")}
-        >
-          Want to play
-        </button>
-        <button
-          className={activeTab === "currentlyPlaying" ? "active" : ""}
-          onClick={() => handleTabClick("currentlyPlaying")}
-        >
-          Playing
-        </button>
-        <button
-          className={activeTab === "alreadyPlayed" ? "active" : ""}
-          onClick={() => handleTabClick("alreadyPlayed")}
-        >
-          Already Played
-        </button>
+    <>
+      <div className="book-search">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search for a video game..."
+        />
+        <button onClick={handleSearchGames}>Search</button>
+        <ul>
+          {searchResults.map((game, index) => (
+            <li key={index}>
+              🎮 {game.name}{" "}
+              <div className="book-buttons">
+                <button onClick={() => handleAddGameFromSearch(game)}>
+                  Add to {activeTab}
+                </button>
+                <button onClick={() => handleGameClick(game.id)}>
+                  View Details
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div className="tab-content">
-        <div
-          className={
-            activeTab === "wantToPlay" ? "tab-panel active" : "tab-panel"
-          }
-        >
-          <h2>The video games I want to play</h2>
-          <ul>
-            {Object.keys(userGamesObj).length !== 0 &&
-              userGamesObj.wantToPlay.map((game, index) => (
-                <li key={index}>🎮 {game}</li>
-              ))}
-          </ul>
+      <div className="tabs-container">
+        <div className="tab-navigation">
+          <button
+            className={activeTab === "wantToPlay" ? "active" : ""}
+            onClick={() => handleTabClick("wantToPlay")}
+          >
+            Want to Play
+          </button>
+          <button
+            className={activeTab === "playing" ? "active" : ""}
+            onClick={() => handleTabClick("playing")}
+          >
+            Playing
+          </button>
+          <button
+            className={activeTab === "played" ? "active" : ""}
+            onClick={() => handleTabClick("played")}
+          >
+            Played
+          </button>
         </div>
 
-        <div
-          className={
-            activeTab === "currentlyPlaying" ? "tab-panel active" : "tab-panel"
-          }
-        >
-          <h2>The video games I am currently playing</h2>
-          <ul>
-            {Object.keys(userGamesObj).length !== 0 &&
-              userGamesObj.currentlyPlaying.map((game, index) => (
-                <li key={index}>🎮 {game}</li>
-              ))}
-          </ul>
-        </div>
+        <div className="tab-content">
+          <div
+            className={
+              activeTab === "wantToPlay" ? "tab-panel active" : "tab-panel"
+            }
+          >
+            <h2>Games I Want to Play</h2>
+            <ul>
+              {currentGames.length > 0 ? (
+                currentGames.map((game, index) => (
+                  <li key={index}>
+                    🎮 {game.title}{" "}
+                    <div className="book-buttons">
+                      <button
+                        className="details-buttom"
+                        onClick={() => handleGameClick(game.gameId)}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteGame(game)}
+                        className="delete-button"
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li></li>
+              )}
+            </ul>
+          </div>
 
-        <div
-          className={
-            activeTab === "alreadyPlayed" ? "tab-panel active" : "tab-panel"
-          }
-        >
-          <h2>The video games I have already played</h2>
-          <ul>
-            {Object.keys(userGamesObj).length !== 0 &&
-              userGamesObj.alreadyPlayed.map((game, index) => (
-                <li key={index}>🎮 {game}</li>
-              ))}
-          </ul>
+          <div
+            className={
+              activeTab === "playing" ? "tab-panel active" : "tab-panel"
+            }
+          >
+            <h2>Currently Playing</h2>
+            <ul>
+              {currentGames.length > 0 ? (
+                currentGames.map((game, index) => (
+                  <li key={index}>
+                    🎮 {game.title}{" "}
+                    <div className="book-buttons">
+                      <button
+                        className="details-buttom"
+                        onClick={() => handleGameClick(game.gameId)}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteGame(game)}
+                        className="delete-button"
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li></li>
+              )}
+            </ul>
+          </div>
+
+          <div
+            className={
+              activeTab === "played" ? "tab-panel active" : "tab-panel"
+            }
+          >
+            <h2>Games I've Played</h2>
+            <ul>
+              {currentGames.length > 0 ? (
+                currentGames.map((game, index) => (
+                  <li key={index}>
+                    🎮 {game.title}{" "}
+                    <div className="book-buttons">
+                      <button
+                        className="details-buttom"
+                        onClick={() => handleGameClick(game.gameId)}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteGame(game)}
+                        className="delete-button"
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li></li>
+              )}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+
+      {selectedGameId && (
+        <MediaDetails
+          mediaId={selectedGameId}
+          mediaType="game"
+          onClose={handleCloseDetails}
+        />
+      )}
+    </>
   );
 };
 

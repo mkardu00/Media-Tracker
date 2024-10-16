@@ -1,5 +1,6 @@
 .tabs-container {
   max-width: 95%;
+
   padding: 20px;
   background-color: #f6f9e3;
   border-radius: 15px;
@@ -258,6 +259,7 @@
 
 .carousel-container {
   max-width: 95%;
+
   margin: 40px auto;
   padding: 20px;
   background-color: #f6f9e3;
@@ -271,11 +273,12 @@
 }
 
 .carousel-item img {
-  width: 100%;
+  width: 50%;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
+
 }
 
 .carousel-item img:hover {

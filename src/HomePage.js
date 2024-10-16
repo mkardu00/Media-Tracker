@@ -113,9 +113,8 @@ const HomePage = () => {
         name: name,
         password: password,
         books: { wantToRead: [], reading: [], read: [] },
-        movies: {},
-        tvShows: {},
-        videoGames: {},
+        movies: { favorites: [], recentlyWatched: [], toWatch: [] },
+        videoGames: { wantToPlay: [], playing: [], played: [] },
       };
       localStorage.setItem("userData", JSON.stringify(userData));
     } else {
@@ -128,8 +127,7 @@ const HomePage = () => {
         password: password,
         books: { wantToRead: [], reading: [], read: [] },
         movies: { favorites: [], recentlyWatched: [], toWatch: [] },
-        tvShows: {},
-        videoGames: {},
+        videoGames: { wantToPlay: [], playing: [], played: [] },
       };
       localStorage.setItem("userData", JSON.stringify(userDataObj));
     }

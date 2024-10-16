@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Books from "./Books";
 import VideoGames from "./VideoGames";
 import Movies from "./Movies";
-import TVShows from "./TVShows";
 import HomePage from "./HomePage";
 import PrivateRoute from "./PrivateRoute";
 import "./NavBar.css";
@@ -42,27 +41,15 @@ function App() {
             ],
             toWatch: ["Fight Club", "The Godfather", "Forrest Gump"],
           },
-          tvShows: {
-            recentlyWatched: [
-              "Breaking Bad",
-              "Game of Thrones",
-              "Stranger Things",
-            ],
-            currentlyWatching: ["The Witcher", "The Mandalorian", "Loki"],
-            toWatch: ["Chernobyl", "Westworld", "True Detective"],
-          },
+
           videoGames: {
             wantToPlay: [
               "The Witcher 3",
               "Red Dead Redemption 2",
               "The Last of Us",
             ],
-            currentlyPlaying: ["Cyberpunk 2077", "Hades", "Hollow Knight"],
-            alreadyPlayed: [
-              "Elden Ring",
-              "Ghost of Tsushima",
-              "Horizon Zero Dawn",
-            ],
+            playing: ["Cyberpunk 2077", "Hades", "Hollow Knight"],
+            played: ["Elden Ring", "Ghost of Tsushima", "Horizon Zero Dawn"],
           },
         },
         "user2@gmail.com": {
@@ -78,23 +65,10 @@ function App() {
             recentlyWatched: ["Parasite", "Jojo Rabbit", "1917"],
             toWatch: ["The Irishman", "Moonlight", "A Star is Born"],
           },
-          tvShows: {
-            recentlyWatched: [
-              "The Crown",
-              "The Office",
-              "Parks and Recreation",
-            ],
-            currentlyWatching: [
-              "The Queen’s Gambit",
-              "Schitt’s Creek",
-              "Ted Lasso",
-            ],
-            toWatch: ["Better Call Saul", "Fargo", "Mindhunter"],
-          },
           videoGames: {
             wantToPlay: ["Animal Crossing", "Stardew Valley", "Celeste"],
-            currentlyPlaying: ["Among Us", "Fall Guys", "Overwatch"],
-            alreadyPlayed: [
+            playing: ["Among Us", "Fall Guys", "Overwatch"],
+            played: [
               "Ori and the Blind Forest",
               "Cuphead",
               "The Legend of Zelda: Breath of the Wild",
@@ -130,15 +104,10 @@ function App() {
               "Schindler’s List",
             ],
           },
-          tvShows: {
-            recentlyWatched: ["Silicon Valley", "Mr. Robot", "Black Mirror"],
-            currentlyWatching: ["Billions", "Suits", "The Boys"],
-            toWatch: ["The Expanse", "Dark", "The Man in the High Castle"],
-          },
           videoGames: {
             wantToPlay: ["Minecraft", "Fortnite", "League of Legends"],
-            currentlyPlaying: ["Valorant", "Apex Legends", "Genshin Impact"],
-            alreadyPlayed: ["Doom Eternal", "Resident Evil Village", "Control"],
+            playing: ["Valorant", "Apex Legends", "Genshin Impact"],
+            played: ["Doom Eternal", "Resident Evil Village", "Control"],
           },
         },
       };
@@ -180,14 +149,6 @@ function App() {
             element={
               <PrivateRoute>
                 <Movies />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/tv-shows"
-            element={
-              <PrivateRoute>
-                <TVShows />
               </PrivateRoute>
             }
           />

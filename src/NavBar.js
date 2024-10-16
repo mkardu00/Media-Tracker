@@ -30,6 +30,14 @@ const NavBar = () => {
             <ul>
               <li>
                 <Link
+                  to="/movies"
+                  className={location.pathname === "/movies" ? "active" : ""}
+                >
+                  Movies & TV Shows
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/books"
                   className={location.pathname === "/books" ? "active" : ""}
                 >
@@ -44,22 +52,6 @@ const NavBar = () => {
                   }
                 >
                   Video Games
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/movies"
-                  className={location.pathname === "/movies" ? "active" : ""}
-                >
-                  Movies
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tv-shows"
-                  className={location.pathname === "/tv-shows" ? "active" : ""}
-                >
-                  TV Shows
                 </Link>
               </li>
             </ul>
