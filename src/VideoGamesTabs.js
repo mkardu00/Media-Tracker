@@ -98,6 +98,16 @@ const VideoGamesTabs = () => {
     setSelectedGameId(null);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchGames();
+    }
+  };
+
+  const handleClearSearchResults = () => {
+    setSearchResults([]);
+    setSearchQuery("");
+  };
   return (
     <>
       <div className="book-search">
@@ -105,9 +115,11 @@ const VideoGamesTabs = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Search for a video game..."
         />
         <button onClick={handleSearchGames}>Search</button>
+        <button onClick={handleClearSearchResults}>Clear</button>
         <ul>
           {searchResults.map((game, index) => (
             <li key={index}>

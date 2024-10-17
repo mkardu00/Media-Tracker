@@ -18,6 +18,7 @@ const BooksTabs = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [currentBooks, setCurrentBooks] = useState(userBooksObj[activeTab]);
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
 
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
   console.log("API Key:", process.env.REACT_APP_GOOGLE_API_KEY);
@@ -30,6 +31,7 @@ const BooksTabs = () => {
       read: [],
     };
     setCurrentBooks(userBooksObj[activeTab]);
+    fetchRecommendedBooks(userBooksObj[activeTab]);
   }, [activeTab, currentUser]);
 
   const handleSearchBooks = async () => {
@@ -42,6 +44,24 @@ const BooksTabs = () => {
       } catch (error) {
         console.error("Greška pri dohvaćanju knjiga:", error);
       }
+    }
+  };
+
+  const fetchRecommendedBooks = async (books) => {
+    if (books.length > 0) {
+      const firstBook = books[0];
+      const searchTerm = firstBook.title;
+
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&key=${API_KEY}`
+        );
+        setRecommendedBooks(response.data.items || []);
+      } catch (error) {
+        console.error("Greška pri dohvaćanju preporučenih knjiga:", error);
+      }
+    } else {
+      setRecommendedBooks([]);
     }
   };
 
@@ -98,7 +118,17 @@ const BooksTabs = () => {
   const handleCloseDetails = () => {
     setSelectedBookId(null);
   };
-  console.log("BOOKS search", searchResults);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchBooks();
+    }
+  };
+
+  const handleClearSearchResults = () => {
+    setSearchResults([]);
+    setSearchQuery("");
+  };
 
   return (
     <>
@@ -107,9 +137,11 @@ const BooksTabs = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Search for a book..."
         />
         <button onClick={handleSearchBooks}>Search</button>
+        <button onClick={handleClearSearchResults}>Clear</button>
         <ul>
           {searchResults.map((book, index) => (
             <li key={index}>
@@ -247,6 +279,45 @@ const BooksTabs = () => {
             </ul>
           </div>
         </div>
+      </div>
+
+      <div className="recommended-books">
+        <h2>Recommended Books</h2>
+        <ul>
+          {recommendedBooks.map((book, index) => (
+            <li key={index}>
+              <div class="book-recommendations">
+                <div class="book-card">
+                  <img
+                    src={
+                      book.volumeInfo.imageLinks &&
+                      book.volumeInfo.imageLinks.smallThumbnail
+                    }
+                    alt="Book Cover"
+                    class="book-cover"
+                  />
+                  <div class="book-details">
+                    <h3 class="book-title">{book.volumeInfo.title}</h3>
+                    <p class="book-author">
+                      {" "}
+                      {book.volumeInfo.authors?.join(", ")}
+                    </p>
+                    <p class="book-description">
+                      Short description of the book goes here. It should be
+                      concise and informative.
+                    </p>
+                    <div class="book-actions">
+                      <button class="details-button">Details</button>
+                      <button onClick={() => handleAddBookFromSearch(book)}>
+                        Add to {activeTab}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
       {selectedBookId && (
         <MediaDetails

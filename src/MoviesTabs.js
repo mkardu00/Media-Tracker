@@ -115,6 +115,12 @@ const MoviesTabs = () => {
     setSelectedMovieId(null);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchMovies();
+    }
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -137,6 +143,11 @@ const MoviesTabs = () => {
     ],
   };
 
+  const handleClearSearchResults = () => {
+    setSearchResults([]);
+    setSearchQuery("");
+  };
+
   return (
     <>
       <div className="book-search">
@@ -144,13 +155,15 @@ const MoviesTabs = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Search for a movie..."
         />
         <button onClick={handleSearchMovies}>Search</button>
+        <button onClick={handleClearSearchResults}>Clear</button>
         <ul>
           {searchResults.length !== 0 && (
             <li>
-              📚 {searchResults.Title}
+              🎬 {searchResults.Title}
               {console.log("ASDSAD", searchResults)}
               <div className="book-buttons">
                 <button onClick={() => handleAddMovieFromSearch(searchResults)}>
@@ -207,7 +220,7 @@ const MoviesTabs = () => {
               {currentMovies.length > 0 ? (
                 currentMovies.map((movie, index) => (
                   <li key={index}>
-                    📚 {movie.title}{" "}
+                    🎬 {movie.title}{" "}
                     <div className="book-buttons">
                       <button
                         className="details-buttom"
@@ -240,7 +253,7 @@ const MoviesTabs = () => {
               {currentMovies.length > 0 ? (
                 currentMovies.map((movie, index) => (
                   <li key={index}>
-                    📚 {movie.title}{" "}
+                    🎬 {movie.title}{" "}
                     <div className="book-buttons">
                       <button
                         className="details-buttom"
@@ -273,7 +286,7 @@ const MoviesTabs = () => {
               {currentMovies.length > 0 ? (
                 currentMovies.map((movie, index) => (
                   <li key={index}>
-                    📚 {movie.title}{" "}
+                    🎬 {movie.title}{" "}
                     <div className="book-buttons">
                       <button
                         className="details-buttom"

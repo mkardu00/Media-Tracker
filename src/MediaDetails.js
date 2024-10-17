@@ -42,7 +42,6 @@ const MediaDetails = ({ mediaId, mediaType, onClose }) => {
   if (!mediaDetails) {
     return <div>Loading...</div>;
   }
-  console.log("DATA ", mediaDetails);
 
   return (
     <div className="media-details-modal">
