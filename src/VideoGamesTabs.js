@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
+import Recommended from "./Recommended";
 
 const VideoGamesTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -18,6 +19,7 @@ const VideoGamesTabs = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedGameId, setSelectedGameId] = useState(null);
   const [currentGames, setCurrentGames] = useState(userGamesObj[activeTab]);
+  const [recommendedGames, setRecommendedGames] = useState([]);
 
   const API_KEY = process.env.REACT_APP_RAWG_API_KEY;
 
@@ -29,6 +31,8 @@ const VideoGamesTabs = () => {
       played: [],
     };
     setCurrentGames(userGamesObj[activeTab]);
+    console.log("aaaaa", userGamesObj[activeTab]);
+    fetchRecommendedGames(userGamesObj[activeTab]);
   }, [activeTab, currentUser]);
 
   const handleSearchGames = async () => {
@@ -41,6 +45,38 @@ const VideoGamesTabs = () => {
       } catch (error) {
         console.error("Greška pri dohvaćanju video igara:", error);
       }
+    }
+  };
+
+  const fetchRecommendedGames = async (games) => {
+    console.log("Games");
+    if (games.length > 0) {
+      const firstGameId = games[0].gameId;
+
+      try {
+        const gameDetailsResponse = await axios.get(
+          `https://api.rawg.io/api/games/${firstGameId}?key=${API_KEY}`
+        );
+        const gameDetails = gameDetailsResponse.data;
+
+        if (gameDetails.developers && gameDetails.developers.length > 0) {
+          const developerId = gameDetails.developers[0].id;
+
+          const recommendedResponse = await axios.get(
+            `https://api.rawg.io/api/games?developers=${developerId}&key=${API_KEY}`
+          );
+          setRecommendedGames(recommendedResponse.data.results || []);
+        } else {
+          setRecommendedGames([]);
+        }
+      } catch (error) {
+        console.error(
+          "Greška pri dohvaćanju detalja igre ili preporučenih igara:",
+          error
+        );
+      }
+    } else {
+      setRecommendedGames([]);
     }
   };
 
@@ -108,6 +144,7 @@ const VideoGamesTabs = () => {
     setSearchResults([]);
     setSearchQuery("");
   };
+
   return (
     <>
       <div className="book-search">
@@ -260,7 +297,7 @@ const VideoGamesTabs = () => {
           </div>
         </div>
       </div>
-
+      <Recommended recommendedMedia={recommendedGames} mediaType="game" />
       {selectedGameId && (
         <MediaDetails
           mediaId={selectedGameId}

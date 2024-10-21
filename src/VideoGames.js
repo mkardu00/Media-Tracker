@@ -40,17 +40,6 @@ const videoGamesData = [
 const VideoGames = () => {
   return (
     <div>
-      <div className="card-container">
-        {videoGamesData.map((game, index) => (
-          <Card
-            key={index}
-            image={game.image}
-            title={game.title}
-            description={game.description}
-            author={game.author}
-          />
-        ))}
-      </div>
       <VideoGamesTabs />
     </div>
   );

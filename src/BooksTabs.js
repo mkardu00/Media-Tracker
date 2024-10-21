@@ -281,7 +281,7 @@ const BooksTabs = () => {
         </div>
       </div>
 
-      <Recommended recommendedBooks={recommendedBooks} />
+      <Recommended recommendedMedia={recommendedBooks} mediaType="book" />
       {selectedBookId && (
         <MediaDetails
           mediaId={selectedBookId}

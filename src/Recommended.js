@@ -1,83 +1,87 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Card from "./Card";
 import "./Recommended.css";
 import MediaDetails from "./MediaDetails";
 
-const Recommended = ({ recommendedBooks }) => {
-  const [selectedBookId, setSelectedBookId] = useState(null);
+const Recommended = ({ recommendedMedia, mediaType }) => {
+  const [selectedMediaId, setSelectedMediaId] = useState(null);
 
-  const handleBookClick = (bookId) => {
-    setSelectedBookId(bookId);
+  const handleMediaClick = (mediaId) => {
+    setSelectedMediaId(mediaId);
   };
 
   const handleCloseDetails = () => {
-    setSelectedBookId(null);
+    setSelectedMediaId(null);
   };
+  console.log("Media,", mediaType);
+
   return (
     <div>
-      <h2>Recommended Books</h2>
+      <h2>
+        Recommended{" "}
+        {mediaType === "book"
+          ? "Books"
+          : mediaType === "game"
+          ? "Games"
+          : "Movies"}
+      </h2>
       <div className="card-container">
-        {recommendedBooks.map(
-          (book, index) =>
-            book.volumeInfo.imageLinks && (
+        {recommendedMedia.map((media, index) => {
+          const { volumeInfo, id } = media;
+          console.log("Media ", media);
+
+          if (mediaType === "book" && volumeInfo.imageLinks) {
+            console.log("HELLO111");
+            return (
               <Card
                 key={index}
-                image={
-                  book.volumeInfo.imageLinks &&
-                  book.volumeInfo.imageLinks.smallThumbnail
-                }
-                title={book.volumeInfo.title}
-                author={book.volumeInfo.authors?.join(", ")}
-                onDetailsClick={() => {
-                  handleBookClick(book.id);
-                }}
+                image={volumeInfo.imageLinks.smallThumbnail}
+                title={volumeInfo.title}
+                author={volumeInfo.authors.join(", ")}
+                onDetailsClick={() => handleMediaClick(id)}
               />
-            )
-        )}
+            );
+          }
+
+          if (mediaType === "game") {
+            console.log("HELLO", media);
+            return (
+              <Card
+                key={index}
+                image={media.background_image && media.background_image}
+                title={media.title}
+                author={
+                  media.developers &&
+                  media.developers.map((dev) => dev.name).join(", ")
+                }
+                onDetailsClick={() => handleMediaClick(id)}
+              />
+            );
+          }
+
+          if (mediaType === "movie") {
+            return (
+              <Card
+                key={index}
+                image={media.Poster && media.Poster !== "N/A" && media.Poster}
+                title={media.Title}
+                author={media.Director}
+                onDetailsClick={() => handleMediaClick(id)}
+              />
+            );
+          }
+
+          return null;
+        })}
       </div>
-      {selectedBookId && (
+      {selectedMediaId && (
         <MediaDetails
-          mediaId={selectedBookId}
-          mediaType="book"
+          mediaId={selectedMediaId}
+          mediaType={mediaType}
           onClose={handleCloseDetails}
         />
       )}
     </div>
-
-    /*     <div className="recommended-books">
-      <h2>Recommended Books</h2>
-
-      {recommendedBooks.map((book, index) => (
-        <div className="book-recommendations" key={index}>
-          <div className="book-card">
-            <img
-              src={
-                book.volumeInfo.imageLinks &&
-                book.volumeInfo.imageLinks.smallThumbnail
-              }
-              alt="Book Cover"
-              className="book-cover"
-            />
-            <div className="book-details">
-              <h3 className="book-title">{book.volumeInfo.title}</h3>
-              <p className="book-author">
-                {book.volumeInfo.authors?.join(", ")}
-              </p>
-              <p className="book-description">
-                Short description of the book goes here. It should be concise
-                and informative.
-              </p>
-              <div className="book-actions">
-                <button className="details-button">Details</button>
-                <button onClick={() => handleAddBookFromSearch(book)}>
-                  Add to {activeTab}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div> */
   );
 };
 

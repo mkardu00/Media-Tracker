@@ -310,6 +310,7 @@ const MoviesTabs = () => {
           </div>
         </div>
       </div>
+
       {selectedMovieId && (
         <MediaDetails
           mediaId={selectedMovieId}
