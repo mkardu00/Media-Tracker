@@ -1,6 +1,5 @@
 import Card from "./Card";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import witcherImg from "./assets/witcher.png";
 import zeldaImg from "./assets/zelda.png";
 import rdr2 from "./assets/rdr2.png";
@@ -27,7 +26,6 @@ const videoGamesData = [
     title: "Red Dead Redemption 2",
     description:
       "An action-adventure game set in the American frontier, following the life of an outlaw.",
-
     author: "Rockstar Games",
   },
   {
@@ -40,41 +38,18 @@ const videoGamesData = [
 ];
 
 const VideoGames = () => {
-  const [currentGameIndex, setCurrentGameIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentGameIndex((prevIndex) =>
-        prevIndex === videoGamesData.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentGame = videoGamesData[currentGameIndex];
   return (
     <div>
-      <div className="carousel-container">
-        <div className="carousel">
+      <div className="card-container">
+        {videoGamesData.map((game, index) => (
           <Card
-            image={currentGame.image}
-            title={currentGame.title}
-            description={currentGame.description}
-            author={currentGame.author}
+            key={index}
+            image={game.image}
+            title={game.title}
+            description={game.description}
+            author={game.author}
           />
-        </div>
-        <div className="carousel-controls">
-          {videoGamesData.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentGameIndex(index)}
-              className={index === currentGameIndex ? "active" : ""}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+        ))}
       </div>
       <VideoGamesTabs />
     </div>

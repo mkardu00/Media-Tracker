@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
+import Recommended from "./Recommended";
 
 const BooksTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -21,7 +22,6 @@ const BooksTabs = () => {
   const [recommendedBooks, setRecommendedBooks] = useState([]);
 
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
-  console.log("API Key:", process.env.REACT_APP_GOOGLE_API_KEY);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
@@ -281,44 +281,7 @@ const BooksTabs = () => {
         </div>
       </div>
 
-      <div className="recommended-books">
-        <h2>Recommended Books</h2>
-        <ul>
-          {recommendedBooks.map((book, index) => (
-            <li key={index}>
-              <div class="book-recommendations">
-                <div class="book-card">
-                  <img
-                    src={
-                      book.volumeInfo.imageLinks &&
-                      book.volumeInfo.imageLinks.smallThumbnail
-                    }
-                    alt="Book Cover"
-                    class="book-cover"
-                  />
-                  <div class="book-details">
-                    <h3 class="book-title">{book.volumeInfo.title}</h3>
-                    <p class="book-author">
-                      {" "}
-                      {book.volumeInfo.authors?.join(", ")}
-                    </p>
-                    <p class="book-description">
-                      Short description of the book goes here. It should be
-                      concise and informative.
-                    </p>
-                    <div class="book-actions">
-                      <button class="details-button">Details</button>
-                      <button onClick={() => handleAddBookFromSearch(book)}>
-                        Add to {activeTab}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Recommended recommendedBooks={recommendedBooks} />
       {selectedBookId && (
         <MediaDetails
           mediaId={selectedBookId}
