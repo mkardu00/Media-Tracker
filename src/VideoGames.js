@@ -48,7 +48,6 @@ const VideoGames = () => {
   };
 
   const fetchRecommendedGames = async (games) => {
-    console.log("Games");
     if (games.length > 0) {
       const firstGameId = games[0].gameId;
 

@@ -3,6 +3,8 @@ import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
+import Search from "./Search";
+import StarRating from "./StarRating"; // Add a StarRating component for user ratings
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -42,7 +44,7 @@ const Books = () => {
         );
         setSearchResults(response.data.items || []);
       } catch (error) {
-        console.error("Greška pri dohvaćanju knjiga:", error);
+        console.error("Error fetching books:", error);
       }
     }
   };
@@ -50,15 +52,26 @@ const Books = () => {
   const fetchRecommendedBooks = async (books) => {
     if (books.length > 0) {
       const firstBook = books[0];
-      const searchTerm = firstBook.title;
+      const author = firstBook.author;
 
-      try {
-        const response = await axios.get(
-          `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&key=${API_KEY}`
-        );
-        setRecommendedBooks(response.data.items || []);
-      } catch (error) {
-        console.error("Greška pri dohvaćanju preporučenih knjiga:", error);
+      if (author) {
+        try {
+          const response = await axios.get(
+            `https://www.googleapis.com/books/v1/volumes?q=inauthor:${author}&key=${API_KEY}`
+          );
+
+          const filteredBooks =
+            response.data.items?.filter(
+              (book) => book.volumeInfo.averageRating >= 4
+            ) || [];
+
+          setRecommendedBooks(filteredBooks);
+        } catch (error) {
+          console.error("Error fetching recommended books:", error);
+          setRecommendedBooks([]);
+        }
+      } else {
+        setRecommendedBooks([]);
       }
     } else {
       setRecommendedBooks([]);
@@ -80,14 +93,20 @@ const Books = () => {
     const bookToAdd = {
       title: book.volumeInfo.title,
       bookId: book.id,
+      author: book.volumeInfo.authors?.[0] || "Unknown",
+      cover: book.volumeInfo.imageLinks?.thumbnail,
+      avgRating: book.volumeInfo.averageRating || "N/A",
+      userRating: 0,
     };
+
+    if (userBooksObj[activeTab].some((b) => b.bookId === bookToAdd.bookId)) {
+      alert("Book already exists in your list.");
+      return;
+    }
 
     userBooksObj[activeTab].push(bookToAdd);
     userData[currentUser].books = userBooksObj;
     localStorage.setItem("userData", JSON.stringify(userData));
-
-    alert(`Book "${book.volumeInfo.title}" added to your ${activeTab} list.`);
-
     setSearchQuery("");
     setSearchResults([]);
     setCurrentBooks([...userBooksObj[activeTab]]);
@@ -118,7 +137,6 @@ const Books = () => {
   const handleCloseDetails = () => {
     setSelectedBookId(null);
   };
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearchBooks();
@@ -130,34 +148,26 @@ const Books = () => {
     setSearchQuery("");
   };
 
+  const handleUserRatingChange = (bookId, rating) => {
+    const updatedBooks = currentBooks.map((book) =>
+      book.bookId === bookId ? { ...book, userRating: rating } : book
+    );
+    setCurrentBooks(updatedBooks);
+  };
+
   return (
     <>
-      <div className="book-search">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Search for a book..."
-        />
-        <button onClick={handleSearchBooks}>Search</button>
-        <button onClick={handleClearSearchResults}>Clear</button>
-        <ul>
-          {searchResults.map((book, index) => (
-            <li key={index}>
-              📚 {book.volumeInfo.title}{" "}
-              <div className="book-buttons">
-                <button onClick={() => handleAddBookFromSearch(book)}>
-                  Add to {activeTab}
-                </button>
-                <button onClick={() => handleBookClick(book.id)}>
-                  View Details
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Search
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearchBooks={handleSearchBooks}
+        handleClearSearchResults={handleClearSearchResults}
+        searchResults={searchResults}
+        handleAddBookFromSearch={handleAddBookFromSearch}
+        handleBookClick={handleBookClick}
+        activeTab={activeTab}
+        handleKeyPress={handleKeyPress}
+      />
 
       <div className="tabs-container">
         <div className="tab-navigation">
@@ -182,102 +192,48 @@ const Books = () => {
         </div>
 
         <div className="tab-content">
-          <div
-            className={
-              activeTab === "wantToRead" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Books I Want to Read</h2>
-            <ul>
-              {currentBooks.length > 0 ? (
-                currentBooks.map((book, index) => (
-                  <li key={index}>
-                    📚 {book.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleBookClick(book.bookId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBook(book)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={
-              activeTab === "reading" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Currently Reading</h2>
-            <ul>
-              {currentBooks.length > 0 ? (
-                currentBooks.map((book, index) => (
-                  <li key={index}>
-                    📚 {book.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleBookClick(book.bookId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBook(book)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={activeTab === "read" ? "tab-panel active" : "tab-panel"}
-          >
-            <h2>Books I've Read</h2>
-            <ul>
-              {currentBooks.length > 0 ? (
-                currentBooks.map((book, index) => (
-                  <li key={index}>
-                    📚 {book.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleBookClick(book.bookId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBook(book)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
+          <table className="books-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Average Rating</th>
+                <th>Your Rating</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentBooks.map((book) => (
+                <tr key={book.bookId}>
+                  <td>
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="book-cover"
+                    />
+                  </td>
+                  <td>{book.title}</td>
+                  <td>{book.author}</td>
+                  <td>{book.avgRating}</td>
+                  <td>
+                    <StarRating
+                      rating={book.userRating}
+                      onRatingChange={(rating) =>
+                        handleUserRatingChange(book.bookId, rating)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => handleBookClick(book.bookId)}>
+                      Details
+                    </button>
+                    <button onClick={() => handleDeleteBook(book)}>❌</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 

@@ -14,6 +14,7 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
     setSelectedMediaId(null);
   };
 
+  console.log("Recommended ", recommendedMedia);
   return (
     <div>
       <h2>
@@ -27,9 +28,8 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
       <div className="card-container">
         {recommendedMedia.map((media, index) => {
           const { volumeInfo, id } = media;
-          console.log("Media ", media);
 
-          if (mediaType === "book" && volumeInfo.imageLinks) {
+          if (mediaType === "book" && volumeInfo && volumeInfo.imageLinks) {
             return (
               <Card
                 key={index}
