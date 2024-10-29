@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Slider from "react-slick";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
+import Recommended from "./Recommended";
 
 const MoviesTabs = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -19,7 +19,7 @@ const MoviesTabs = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [currentMovies, setCurrentMovies] = useState(userMoviesObj[activeTab]);
-  const [popularMovies, setPopularMovies] = useState([]);
+  const [recommendedMovies, setRecommendedMovies] = useState([]);
 
   const API_KEY = process.env.REACT_APP_OMDB_API_KEY;
 
@@ -31,33 +31,47 @@ const MoviesTabs = () => {
       toWatch: [],
     };
     setCurrentMovies(userMoviesObj[activeTab]);
+    fetchRecommendedMovies(userMoviesObj[activeTab]);
   }, [activeTab, currentUser]);
-
-  useEffect(() => {
-    const fetchPopularMovies = async () => {
-      try {
-        const response = await axios.get(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=christmas`
-        );
-        setPopularMovies(response.data.Search || []);
-      } catch (error) {
-        console.error("Greška pri dohvaćanju popularnih filmova:", error);
-      }
-    };
-
-    fetchPopularMovies();
-  }, []);
 
   const handleSearchMovies = async () => {
     if (searchQuery.trim() !== "") {
       try {
         const response = await axios.get(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&t=${searchQuery}`
+          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchQuery}`
         );
-        setSearchResults(response.data || []);
+        setSearchResults(response.data.Search || []);
       } catch (error) {
-        console.error("Greška pri dohvaćanju filma:", error);
+        console.error("Error fetching movies:", error);
       }
+    }
+  };
+
+  const fetchRecommendedMovies = async (movies) => {
+    if (movies.length > 0) {
+      const firstMovieId = movies[0].movieId;
+
+      try {
+        const movieDetailsResponse = await axios.get(
+          `http://www.omdbapi.com/?apikey=${API_KEY}&i=${firstMovieId}`
+        );
+        const movieDetails = movieDetailsResponse.data;
+
+        if (movieDetails.Genre) {
+          const genre = movieDetails.Genre.split(", ")[0];
+
+          const recommendedResponse = await axios.get(
+            `http://www.omdbapi.com/?apikey=${API_KEY}&s=${genre}`
+          );
+          setRecommendedMovies(recommendedResponse.data.Search || []);
+        } else {
+          setRecommendedMovies([]);
+        }
+      } catch (error) {
+        console.error("Error fetching recommended movies:", error);
+      }
+    } else {
+      setRecommendedMovies([]);
     }
   };
 
@@ -82,7 +96,7 @@ const MoviesTabs = () => {
     userData[currentUser].movies = userMoviesObj;
     localStorage.setItem("userData", JSON.stringify(userData));
 
-    alert(`Movie is added to your list.`);
+    alert(`Movie "${movie.Title}" added to your ${activeTab} list.`);
 
     setSearchQuery("");
     setSearchResults([]);
@@ -98,7 +112,7 @@ const MoviesTabs = () => {
     };
 
     const updatedMovies = userMoviesObj[activeTab].filter(
-      (b) => b.movieId !== movie.movieId
+      (m) => m.movieId !== movie.movieId
     );
     userMoviesObj[activeTab] = updatedMovies;
     userData[currentUser].movies = userMoviesObj;
@@ -121,28 +135,6 @@ const MoviesTabs = () => {
     }
   };
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  };
-
   const handleClearSearchResults = () => {
     setSearchResults([]);
     setSearchQuery("");
@@ -161,32 +153,22 @@ const MoviesTabs = () => {
         <button onClick={handleSearchMovies}>Search</button>
         <button onClick={handleClearSearchResults}>Clear</button>
         <ul>
-          {searchResults.length !== 0 && (
-            <li>
-              🎬 {searchResults.Title}
-              {console.log("ASDSAD", searchResults)}
+          {searchResults.map((movie, index) => (
+            <li key={index}>
+              🎬 {movie.Title}
               <div className="book-buttons">
-                <button onClick={() => handleAddMovieFromSearch(searchResults)}>
+                <button onClick={() => handleAddMovieFromSearch(movie)}>
                   Add to {activeTab}
                 </button>
-                <button onClick={() => handleMovieClick(searchResults.imdbID)}>
+                <button onClick={() => handleMovieClick(movie.imdbID)}>
                   View Details
                 </button>
               </div>
             </li>
-          )}
+          ))}
         </ul>
       </div>
-      <div className="carousel-container">
-        <Slider {...settings}>
-          {popularMovies.map((movie) => (
-            <div key={movie.imdbID} className="carousel-item">
-              <img src={movie.Poster} alt={movie.Title} />
-              <h3>{movie.Title}</h3>
-            </div>
-          ))}
-        </Slider>
-      </div>
+
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
@@ -220,10 +202,10 @@ const MoviesTabs = () => {
               {currentMovies.length > 0 ? (
                 currentMovies.map((movie, index) => (
                   <li key={index}>
-                    🎬 {movie.title}{" "}
+                    🎬 {movie.title}
                     <div className="book-buttons">
                       <button
-                        className="details-buttom"
+                        className="details-button"
                         onClick={() => handleMovieClick(movie.movieId)}
                       >
                         View Details
@@ -238,7 +220,7 @@ const MoviesTabs = () => {
                   </li>
                 ))
               ) : (
-                <li></li>
+                <li>No movies in this list.</li>
               )}
             </ul>
           </div>
@@ -311,6 +293,7 @@ const MoviesTabs = () => {
         </div>
       </div>
 
+      <Recommended recommendedMedia={recommendedMovies} mediaType="movie" />
       {selectedMovieId && (
         <MediaDetails
           mediaId={selectedMovieId}

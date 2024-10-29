@@ -13,7 +13,6 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
   const handleCloseDetails = () => {
     setSelectedMediaId(null);
   };
-  console.log("Media,", mediaType);
 
   return (
     <div>
@@ -31,7 +30,6 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
           console.log("Media ", media);
 
           if (mediaType === "book" && volumeInfo.imageLinks) {
-            console.log("HELLO111");
             return (
               <Card
                 key={index}
@@ -44,7 +42,6 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
           }
 
           if (mediaType === "game") {
-            console.log("HELLO", media);
             return (
               <Card
                 key={index}
@@ -66,7 +63,7 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
                 image={media.Poster && media.Poster !== "N/A" && media.Poster}
                 title={media.Title}
                 author={media.Director}
-                onDetailsClick={() => handleMediaClick(id)}
+                onDetailsClick={() => handleMediaClick(media.imdbID)}
               />
             );
           }

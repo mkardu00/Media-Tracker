@@ -31,7 +31,6 @@ const VideoGamesTabs = () => {
       played: [],
     };
     setCurrentGames(userGamesObj[activeTab]);
-    console.log("aaaaa", userGamesObj[activeTab]);
     fetchRecommendedGames(userGamesObj[activeTab]);
   }, [activeTab, currentUser]);
 
