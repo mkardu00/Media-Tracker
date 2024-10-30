@@ -3,6 +3,7 @@ import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
+import StarRating from "./StarRating";
 
 const VideoGames = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -42,7 +43,7 @@ const VideoGames = () => {
         );
         setSearchResults(response.data.results || []);
       } catch (error) {
-        console.error("Greška pri dohvaćanju video igara:", error);
+        console.error("Error fetching video games:", error);
       }
     }
   };
@@ -57,19 +58,21 @@ const VideoGames = () => {
         );
         const gameDetails = gameDetailsResponse.data;
 
-        if (gameDetails.developers && gameDetails.developers.length > 0) {
-          const developerId = gameDetails.developers[0].id;
+        if (gameDetails.genres && gameDetails.genres.length > 0) {
+          const genreId = gameDetails.genres[0].id;
 
           const recommendedResponse = await axios.get(
-            `https://api.rawg.io/api/games?developers=${developerId}&key=${API_KEY}`
+            `https://api.rawg.io/api/games?genres=${genreId}&key=${API_KEY}&rating=4`
           );
-          setRecommendedGames(recommendedResponse.data.results || []);
+          const recommendedGamesData = recommendedResponse.data.results || [];
+
+          setRecommendedGames(recommendedGamesData);
         } else {
           setRecommendedGames([]);
         }
       } catch (error) {
         console.error(
-          "Greška pri dohvaćanju detalja igre ili preporučenih igara:",
+          "Error fetching game details or recommended games:",
           error
         );
       }
@@ -77,7 +80,6 @@ const VideoGames = () => {
       setRecommendedGames([]);
     }
   };
-
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
@@ -93,13 +95,20 @@ const VideoGames = () => {
     const gameToAdd = {
       title: game.name,
       gameId: game.id,
+      developer: game.developers?.[0]?.name || "Unknown Developer",
+      cover: game.background_image || "",
+      avgRating: game.rating || "N/A",
+      userRating: 0,
     };
+
+    if (userGamesObj[activeTab].some((g) => g.gameId === gameToAdd.gameId)) {
+      alert("Game already exists in your list.");
+      return;
+    }
 
     userGamesObj[activeTab].push(gameToAdd);
     userData[currentUser].games = userGamesObj;
     localStorage.setItem("userData", JSON.stringify(userData));
-
-    alert(`Game "${game.name}" added to your ${activeTab} list.`);
 
     setSearchQuery("");
     setSearchResults([]);
@@ -143,6 +152,13 @@ const VideoGames = () => {
     setSearchQuery("");
   };
 
+  const handleUserRatingChange = (gameId, rating) => {
+    const updatedGames = currentGames.map((game) =>
+      game.gameId === gameId ? { ...game, userRating: rating } : game
+    );
+    setCurrentGames(updatedGames);
+  };
+
   return (
     <>
       <div className="book-search">
@@ -150,7 +166,7 @@ const VideoGames = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={(e) => e.key === "Enter" && handleKeyPress}
           placeholder="Search for a video game..."
         />
         <button onClick={handleSearchGames}>Search</button>
@@ -195,104 +211,48 @@ const VideoGames = () => {
         </div>
 
         <div className="tab-content">
-          <div
-            className={
-              activeTab === "wantToPlay" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Games I Want to Play</h2>
-            <ul>
-              {currentGames.length > 0 ? (
-                currentGames.map((game, index) => (
-                  <li key={index}>
-                    🎮 {game.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleGameClick(game.gameId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGame(game)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={
-              activeTab === "playing" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Currently Playing</h2>
-            <ul>
-              {currentGames.length > 0 ? (
-                currentGames.map((game, index) => (
-                  <li key={index}>
-                    🎮 {game.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleGameClick(game.gameId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGame(game)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={
-              activeTab === "played" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Games I've Played</h2>
-            <ul>
-              {currentGames.length > 0 ? (
-                currentGames.map((game, index) => (
-                  <li key={index}>
-                    🎮 {game.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleGameClick(game.gameId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGame(game)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
+          <table className="books-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Developer</th>
+                <th>Average Rating</th>
+                <th>Your Rating</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentGames.map((game) => (
+                <tr key={game.gameId}>
+                  <td>
+                    <img
+                      src={game.cover}
+                      alt={game.title}
+                      className="book-cover"
+                    />
+                  </td>
+                  <td>{game.title}</td>
+                  <td>{game.developer}</td>
+                  <td>{game.avgRating}</td>
+                  <td>
+                    <StarRating
+                      rating={game.userRating}
+                      onRatingChange={(rating) =>
+                        handleUserRatingChange(game.gameId, rating)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => handleGameClick(game.gameId)}>
+                      Details
+                    </button>
+                    <button onClick={() => handleDeleteGame(game)}>❌</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <Recommended recommendedMedia={recommendedGames} mediaType="game" />

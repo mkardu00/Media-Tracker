@@ -4,7 +4,7 @@ import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import Search from "./Search";
-import StarRating from "./StarRating"; // Add a StarRating component for user ratings
+import StarRating from "./StarRating";
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");

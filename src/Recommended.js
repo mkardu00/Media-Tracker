@@ -14,7 +14,6 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
     setSelectedMediaId(null);
   };
 
-  console.log("Recommended ", recommendedMedia);
   return (
     <div>
       <h2>
@@ -46,11 +45,8 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
               <Card
                 key={index}
                 image={media.background_image && media.background_image}
-                title={media.title}
-                author={
-                  media.developers &&
-                  media.developers.map((dev) => dev.name).join(", ")
-                }
+                title={media.name}
+                author={media.developer}
                 onDetailsClick={() => handleMediaClick(id)}
               />
             );

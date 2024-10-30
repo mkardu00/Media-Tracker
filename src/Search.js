@@ -18,7 +18,7 @@ const Search = ({
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        onKeyPress={handleKeyPress}
+        onKeyDown={(e) => e.key === "Enter" && handleKeyPress}
         placeholder="Search for a book..."
       />
       <button onClick={handleSearchBooks}>Search</button>
