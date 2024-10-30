@@ -3,6 +3,7 @@ import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
+import StarRating from "./StarRating";
 
 const Movies = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -90,13 +91,21 @@ const Movies = () => {
     const movieToAdd = {
       title: movie.Title,
       movieId: movie.imdbID,
+      cover: movie.Poster || "",
+      avgRating: movie.imdbRating || "N/A",
+      userRating: 0,
     };
+
+    if (
+      userMoviesObj[activeTab].some((m) => m.movieId === movieToAdd.movieId)
+    ) {
+      alert("Movie already exists in your list.");
+      return;
+    }
 
     userMoviesObj[activeTab].push(movieToAdd);
     userData[currentUser].movies = userMoviesObj;
     localStorage.setItem("userData", JSON.stringify(userData));
-
-    alert(`Movie "${movie.Title}" added to your ${activeTab} list.`);
 
     setSearchQuery("");
     setSearchResults([]);
@@ -138,6 +147,13 @@ const Movies = () => {
   const handleClearSearchResults = () => {
     setSearchResults([]);
     setSearchQuery("");
+  };
+
+  const handleUserRatingChange = (movieId, rating) => {
+    const updatedMovies = currentMovies.map((movie) =>
+      movie.movieId === movieId ? { ...movie, userRating: rating } : movie
+    );
+    setCurrentMovies(updatedMovies);
   };
 
   return (
@@ -192,107 +208,48 @@ const Movies = () => {
         </div>
 
         <div className="tab-content">
-          <div
-            className={
-              activeTab === "favorites" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Favorite Movies</h2>
-            <ul>
-              {currentMovies.length > 0 ? (
-                currentMovies.map((movie, index) => (
-                  <li key={index}>
-                    🎬 {movie.title}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleMovieClick(movie.movieId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteMovie(movie)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li>No movies in this list.</li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={
-              activeTab === "recentlyWatched" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2>Movies I Have Watched</h2>
-            <ul>
-              {currentMovies.length > 0 ? (
-                currentMovies.map((movie, index) => (
-                  <li key={index}>
-                    🎬 {movie.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleMovieClick(movie.movieId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteMovie(movie)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
-
-          <div
-            className={
-              activeTab === "toWatch" ? "tab-panel active" : "tab-panel"
-            }
-          >
-            <h2> Movies I Would Like to Watch</h2>
-            <ul>
-              {currentMovies.length > 0 ? (
-                currentMovies.map((movie, index) => (
-                  <li key={index}>
-                    🎬 {movie.title}{" "}
-                    <div className="book-buttons">
-                      <button
-                        className="details-buttom"
-                        onClick={() => handleMovieClick(movie.movieId)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteMovie(movie)}
-                        className="delete-button"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li></li>
-              )}
-            </ul>
-          </div>
+          <table className="books-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Average Rating</th>
+                <th>Your Rating</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentMovies.map((movie) => (
+                <tr key={movie.movieId}>
+                  <td>
+                    <img
+                      src={movie.cover}
+                      alt={movie.title}
+                      className="book-cover"
+                    />
+                  </td>
+                  <td>{movie.title}</td>
+                  <td>{movie.avgRating}</td>
+                  <td>
+                    <StarRating
+                      rating={movie.userRating}
+                      onRatingChange={(rating) =>
+                        handleUserRatingChange(movie.movieId, rating)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => handleMovieClick(movie.movieId)}>
+                      Details
+                    </button>
+                    <button onClick={() => handleDeleteMovie(movie)}>❌</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-
       <Recommended recommendedMedia={recommendedMovies} mediaType="movie" />
       {selectedMovieId && (
         <MediaDetails
