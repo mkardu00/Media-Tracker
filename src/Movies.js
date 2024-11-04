@@ -14,6 +14,7 @@ const Movies = () => {
     recentlyWatched: [],
     toWatch: [],
   };
+  console.log("User data: ", userData);
 
   const [activeTab, setActiveTab] = useState("favorites");
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +22,8 @@ const Movies = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [currentMovies, setCurrentMovies] = useState(userMoviesObj[activeTab]);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
+  const [genreFilter, setGenreFilter] = useState("");
+  const [ratingFilter, setRatingFilter] = useState(0);
 
   const API_KEY = process.env.REACT_APP_OMDB_API_KEY;
 
@@ -31,9 +34,10 @@ const Movies = () => {
       recentlyWatched: [],
       toWatch: [],
     };
-    setCurrentMovies(userMoviesObj[activeTab]);
+    const filteredMovies = applyFilters(userMoviesObj[activeTab]);
+    setCurrentMovies(filteredMovies);
     fetchRecommendedMovies(userMoviesObj[activeTab]);
-  }, [activeTab, currentUser]);
+  }, [activeTab, currentUser, genreFilter, ratingFilter]);
 
   const handleSearchMovies = async () => {
     if (searchQuery.trim() !== "") {
@@ -41,6 +45,7 @@ const Movies = () => {
         const response = await axios.get(
           `http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchQuery}`
         );
+        console.log("Search results ", response.data);
         setSearchResults(response.data.Search || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -76,11 +81,22 @@ const Movies = () => {
     }
   };
 
+  const applyFilters = (movies) => {
+    return movies.filter((movie) => {
+      const genreMatch = genreFilter
+        ? movie.genre?.includes(genreFilter)
+        : true;
+      const ratingMatch =
+        ratingFilter > 0 ? movie.userRating >= ratingFilter : true;
+      return genreMatch && ratingMatch;
+    });
+  };
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
 
-  const handleAddMovieFromSearch = (movie) => {
+  const handleAddMovieFromSearch = async (movie) => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
     const userMoviesObj = userData[currentUser]?.movies || {
       favorites: [],
@@ -88,28 +104,37 @@ const Movies = () => {
       toWatch: [],
     };
 
-    const movieToAdd = {
-      title: movie.Title,
-      movieId: movie.imdbID,
-      cover: movie.Poster || "",
-      avgRating: movie.imdbRating || "N/A",
-      userRating: 0,
-    };
-
-    if (
-      userMoviesObj[activeTab].some((m) => m.movieId === movieToAdd.movieId)
-    ) {
+    if (userMoviesObj[activeTab].some((m) => m.movieId === movie.imdbID)) {
       alert("Movie already exists in your list.");
       return;
     }
 
-    userMoviesObj[activeTab].push(movieToAdd);
-    userData[currentUser].movies = userMoviesObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
+    try {
+      const movieDetailsResponse = await axios.get(
+        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${movie.imdbID}`
+      );
+      const movieDetails = movieDetailsResponse.data;
 
-    setSearchQuery("");
-    setSearchResults([]);
-    setCurrentMovies([...userMoviesObj[activeTab]]);
+      const movieToAdd = {
+        title: movie.Title,
+        movieId: movie.imdbID,
+        cover: movie.Poster || "",
+        avgRating: movieDetails.imdbRating || "N/A",
+        userRating: 0,
+        genre: movieDetails.Genre || "N/A",
+        directro: movieDetails.Director,
+      };
+
+      userMoviesObj[activeTab].push(movieToAdd);
+      userData[currentUser].movies = userMoviesObj;
+      localStorage.setItem("userData", JSON.stringify(userData));
+
+      setSearchQuery("");
+      setSearchResults([]);
+      setCurrentMovies([...userMoviesObj[activeTab]]);
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+    }
   };
 
   const handleDeleteMovie = (movie) => {
@@ -185,6 +210,29 @@ const Movies = () => {
         </ul>
       </div>
 
+      <div className="filter-container">
+        <select
+          onChange={(e) => setGenreFilter(e.target.value)}
+          value={genreFilter}
+        >
+          <option value="">All Genres</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+        </select>
+        <select
+          onChange={(e) => setRatingFilter(Number(e.target.value))}
+          value={ratingFilter}
+        >
+          <option value={0}>All Ratings</option>
+          <option value={1}>1 Star & Up</option>
+          <option value={2}>2 Stars & Up</option>
+          <option value={3}>3 Stars & Up</option>
+          <option value={4}>4 Stars & Up</option>
+          <option value={5}>5 Stars</option>
+        </select>
+      </div>
+
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
@@ -213,6 +261,7 @@ const Movies = () => {
               <tr>
                 <th>Cover</th>
                 <th>Title</th>
+                <th>Director</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
                 <th>Actions</th>
@@ -229,13 +278,13 @@ const Movies = () => {
                     />
                   </td>
                   <td>{movie.title}</td>
+                  <td>{movie.directro}</td>
                   <td>{movie.avgRating}</td>
                   <td>
                     <StarRating
-                      rating={movie.userRating}
-                      onRatingChange={(rating) =>
-                        handleUserRatingChange(movie.movieId, rating)
-                      }
+                      movieId={movie.movieId}
+                      onRatingChange={handleUserRatingChange}
+                      initialRating={movie.userRating}
                     />
                   </td>
                   <td>
@@ -251,11 +300,12 @@ const Movies = () => {
         </div>
       </div>
       <Recommended recommendedMedia={recommendedMovies} mediaType="movie" />
+
       {selectedMovieId && (
         <MediaDetails
           mediaId={selectedMovieId}
-          mediaType="movie"
           onClose={handleCloseDetails}
+          mediaType="movie"
         />
       )}
     </>

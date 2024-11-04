@@ -337,3 +337,25 @@ td button:hover {
 .user-rating {
   color: #f39c12;
 }
+
+.filters-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.filters-container label {
+  margin-right: 20px;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.filters-container select,
+.filters-container input[type="range"] {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+  font-size: 1rem;
+}
