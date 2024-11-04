@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 
-const StarRating = ({ rating, onRatingChange }) => {
+const StarRating = ({ movieId, initialRating, onRatingChange }) => {
+  const [rating, setRating] = useState(initialRating);
+
   const handleStarClick = (newRating) => {
-    onRatingChange(newRating);
+    setRating(newRating);
+    onRatingChange(movieId, newRating);
   };
 
   return (
     <div className="star-rating">
-      {[...Array(5)].map((_, index) => (
+      {[1, 2, 3, 4, 5].map((star) => (
         <span
-          key={index}
-          onClick={() => handleStarClick(index + 1)}
+          key={star}
+          onClick={() => handleStarClick(star)}
           style={{
+            color: star <= rating ? "gold" : "gray",
             cursor: "pointer",
-            color: index < rating ? "#f39c12" : "#ccc",
           }}
         >
           ★

@@ -175,9 +175,24 @@ const Movies = () => {
   };
 
   const handleUserRatingChange = (movieId, rating) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userMoviesObj = userData[currentUser]?.movies || {
+      favorites: [],
+      recentlyWatched: [],
+      toWatch: [],
+    };
+
     const updatedMovies = currentMovies.map((movie) =>
       movie.movieId === movieId ? { ...movie, userRating: rating } : movie
     );
+
+    userMoviesObj[activeTab] = userMoviesObj[activeTab].map((movie) =>
+      movie.movieId === movieId ? { ...movie, userRating: rating } : movie
+    );
+
+    userData[currentUser].movies = userMoviesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
     setCurrentMovies(updatedMovies);
   };
 
