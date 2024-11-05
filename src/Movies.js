@@ -14,7 +14,6 @@ const Movies = () => {
     recentlyWatched: [],
     toWatch: [],
   };
-  console.log("User data: ", userData);
 
   const [activeTab, setActiveTab] = useState("favorites");
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,8 +85,10 @@ const Movies = () => {
       const genreMatch = genreFilter
         ? movie.genre?.includes(genreFilter)
         : true;
-      const ratingMatch =
-        ratingFilter > 0 ? movie.userRating >= ratingFilter : true;
+
+      const avgRating = parseFloat(movie.avgRating);
+      const ratingMatch = ratingFilter > 0 ? avgRating >= ratingFilter : true;
+
       return genreMatch && ratingMatch;
     });
   };
@@ -122,7 +123,10 @@ const Movies = () => {
         avgRating: movieDetails.imdbRating || "N/A",
         userRating: 0,
         genre: movieDetails.Genre || "N/A",
-        directro: movieDetails.Director,
+        director:
+          movieDetails.Director !== "N/A"
+            ? movieDetails.Director
+            : movieDetails.Writer || "N/A",
       };
 
       userMoviesObj[activeTab].push(movieToAdd);
@@ -234,17 +238,19 @@ const Movies = () => {
           <option value="Action">Action</option>
           <option value="Comedy">Comedy</option>
           <option value="Drama">Drama</option>
+          <option value="Family">Family</option>
         </select>
+
         <select
           onChange={(e) => setRatingFilter(Number(e.target.value))}
           value={ratingFilter}
         >
           <option value={0}>All Ratings</option>
-          <option value={1}>1 Star & Up</option>
-          <option value={2}>2 Stars & Up</option>
-          <option value={3}>3 Stars & Up</option>
-          <option value={4}>4 Stars & Up</option>
-          <option value={5}>5 Stars</option>
+          <option value={5}>5 & Up</option>
+          <option value={6}>6 & Up</option>
+          <option value={7}>7 & Up</option>
+          <option value={8}>8 & Up</option>
+          <option value={9}>9 & Up</option>
         </select>
       </div>
 
@@ -293,7 +299,7 @@ const Movies = () => {
                     />
                   </td>
                   <td>{movie.title}</td>
-                  <td>{movie.directro}</td>
+                  <td>{movie.director}</td>
                   <td>{movie.avgRating}</td>
                   <td>
                     <StarRating
