@@ -160,13 +160,14 @@ const Books = () => {
       <Search
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        handleSearchBooks={handleSearchBooks}
+        handleSearch={handleSearchBooks}
         handleClearSearchResults={handleClearSearchResults}
         searchResults={searchResults}
-        handleAddBookFromSearch={handleAddBookFromSearch}
-        handleBookClick={handleBookClick}
+        handleAddMediaFromSearch={handleAddBookFromSearch}
+        handleMediaClick={handleBookClick}
         activeTab={activeTab}
         handleKeyPress={handleKeyPress}
+        mediaType="book"
       />
 
       <div className="tabs-container">

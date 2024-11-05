@@ -4,13 +4,14 @@ import "./BooksTabs.css";
 const Search = ({
   searchQuery,
   setSearchQuery,
-  handleSearchBooks,
+  handleSearch,
   handleClearSearchResults,
   searchResults,
-  handleAddBookFromSearch,
-  handleBookClick,
+  handleAddMediaFromSearch,
+  handleMediaClick,
   activeTab,
   handleKeyPress,
+  mediaType,
 }) => {
   return (
     <div className="book-search">
@@ -18,20 +19,21 @@ const Search = ({
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleKeyPress}
-        placeholder="Search for a book..."
+        onKeyDown={(e) => e.key === "Enter" && handleKeyPress(e)}
+        placeholder={`Search for a ${mediaType}...`}
       />
-      <button onClick={handleSearchBooks}>Search</button>
+      <button onClick={handleSearch}>Search</button>
       <button onClick={handleClearSearchResults}>Clear</button>
       <ul>
-        {searchResults.map((book, index) => (
+        {searchResults.map((item, index) => (
           <li key={index}>
-            📚 {book.volumeInfo.title}{" "}
+            {mediaType === "book" ? "📚" : "🎬"}{" "}
+            {item.volumeInfo?.title || item.Title}{" "}
             <div className="book-buttons">
-              <button onClick={() => handleAddBookFromSearch(book)}>
+              <button onClick={() => handleAddMediaFromSearch(item)}>
                 Add to {activeTab}
               </button>
-              <button onClick={() => handleBookClick(book.id)}>
+              <button onClick={() => handleMediaClick(item.id || item.imdbID)}>
                 View Details
               </button>
             </div>

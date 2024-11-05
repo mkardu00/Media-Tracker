@@ -4,6 +4,7 @@ import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import StarRating from "./StarRating";
+import Search from "./Search";
 
 const Movies = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -202,32 +203,18 @@ const Movies = () => {
 
   return (
     <>
-      <div className="book-search">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Search for a movie..."
-        />
-        <button onClick={handleSearchMovies}>Search</button>
-        <button onClick={handleClearSearchResults}>Clear</button>
-        <ul>
-          {searchResults.map((movie, index) => (
-            <li key={index}>
-              🎬 {movie.Title}
-              <div className="book-buttons">
-                <button onClick={() => handleAddMovieFromSearch(movie)}>
-                  Add to {activeTab}
-                </button>
-                <button onClick={() => handleMovieClick(movie.imdbID)}>
-                  View Details
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Search
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearch={handleSearchMovies}
+        handleClearSearchResults={handleClearSearchResults}
+        searchResults={searchResults}
+        handleAddMediaFromSearch={handleAddMovieFromSearch}
+        handleMediaClick={handleMovieClick}
+        activeTab={activeTab}
+        handleKeyPress={handleKeyPress}
+        mediaType="movie"
+      />
 
       <div className="filter-container">
         <select
