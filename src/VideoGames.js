@@ -4,6 +4,7 @@ import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import StarRating from "./StarRating";
+import Search from "./Search";
 
 const VideoGames = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -84,7 +85,7 @@ const VideoGames = () => {
     setActiveTab(tabName);
   };
 
-  const handleAddGameFromSearch = (game) => {
+  const handleAddGameFromSearch = async (game) => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
     const userGamesObj = userData[currentUser]?.games || {
       wantToPlay: [],
@@ -151,7 +152,6 @@ const VideoGames = () => {
     setSearchResults([]);
     setSearchQuery("");
   };
-
   const handleUserRatingChange = (gameId, rating) => {
     const updatedGames = currentGames.map((game) =>
       game.gameId === gameId ? { ...game, userRating: rating } : game
@@ -161,33 +161,18 @@ const VideoGames = () => {
 
   return (
     <>
-      <div className="book-search">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleKeyPress}
-          placeholder="Search for a video game..."
-        />
-        <button onClick={handleSearchGames}>Search</button>
-        <button onClick={handleClearSearchResults}>Clear</button>
-        <ul>
-          {searchResults.map((game, index) => (
-            <li key={index}>
-              🎮 {game.name}{" "}
-              <div className="book-buttons">
-                <button onClick={() => handleAddGameFromSearch(game)}>
-                  Add to {activeTab}
-                </button>
-                <button onClick={() => handleGameClick(game.id)}>
-                  View Details
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
+      <Search
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearch={handleSearchGames}
+        handleClearSearchResults={handleClearSearchResults}
+        searchResults={searchResults}
+        handleAddMediaFromSearch={handleAddGameFromSearch}
+        handleMediaClick={handleGameClick}
+        activeTab={activeTab}
+        handleKeyPress={handleKeyPress}
+        mediaType="game"
+      />
       <div className="tabs-container">
         <div className="tab-navigation">
           <button

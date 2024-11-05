@@ -27,13 +27,23 @@ const Search = ({
       <ul>
         {searchResults.map((item, index) => (
           <li key={index}>
-            {mediaType === "book" ? "📚" : "🎬"}{" "}
-            {item.volumeInfo?.title || item.Title}{" "}
+            {mediaType === "book"
+              ? "📚 "
+              : mediaType === "movie"
+              ? "🎬 "
+              : mediaType === "game"
+              ? "🎮 "
+              : ""}
+            {item.volumeInfo?.title || item.Title || item.name}{" "}
             <div className="book-buttons">
               <button onClick={() => handleAddMediaFromSearch(item)}>
                 Add to {activeTab}
               </button>
-              <button onClick={() => handleMediaClick(item.id || item.imdbID)}>
+              <button
+                onClick={() =>
+                  handleMediaClick(item.id || item.imdbID || item.gameId)
+                }
+              >
                 View Details
               </button>
             </div>
