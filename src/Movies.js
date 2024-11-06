@@ -307,7 +307,11 @@ const Movies = () => {
           </table>
         </div>
       </div>
-      <Recommended recommendedMedia={recommendedMovies} mediaType="movie" />
+      <Recommended
+        recommendedMedia={recommendedMovies}
+        mediaType="movie"
+        handleAddMedia={handleAddMovieFromSearch}
+      />
 
       {selectedMovieId && (
         <MediaDetails

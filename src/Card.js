@@ -1,7 +1,14 @@
 import React from "react";
 import "./Card.css";
 
-const Card = ({ image, title, description, author, onDetailsClick }) => {
+const Card = ({
+  image,
+  title,
+  description,
+  author,
+  onDetailsClick,
+  onAddClick,
+}) => {
   return (
     <div className="card">
       {image && <img src={image} alt={title} className="card-image" />}
@@ -13,6 +20,11 @@ const Card = ({ image, title, description, author, onDetailsClick }) => {
       <button onClick={onDetailsClick} className="details-button">
         Details
       </button>
+      {onAddClick && (
+        <button onClick={onAddClick} className="details-button">
+          ➕
+        </button>
+      )}
     </div>
   );
 };

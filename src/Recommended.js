@@ -3,7 +3,7 @@ import Card from "./Card";
 import "./Recommended.css";
 import MediaDetails from "./MediaDetails";
 
-const Recommended = ({ recommendedMedia, mediaType }) => {
+const Recommended = ({ recommendedMedia, mediaType, handleAddMedia }) => {
   const [selectedMediaId, setSelectedMediaId] = useState(null);
 
   const handleMediaClick = (mediaId) => {
@@ -36,6 +36,7 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
                 title={volumeInfo.title}
                 author={volumeInfo.authors.join(", ")}
                 onDetailsClick={() => handleMediaClick(id)}
+                onAddClick={() => handleAddMedia(media)}
               />
             );
           }
@@ -44,10 +45,11 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
             return (
               <Card
                 key={index}
-                image={media.background_image && media.background_image}
+                image={media.background_image}
                 title={media.name}
                 author={media.developer}
                 onDetailsClick={() => handleMediaClick(id)}
+                onAddClick={() => handleAddMedia(media)}
               />
             );
           }
@@ -60,6 +62,7 @@ const Recommended = ({ recommendedMedia, mediaType }) => {
                 title={media.Title}
                 author={media.Director}
                 onDetailsClick={() => handleMediaClick(media.imdbID)}
+                onAddClick={() => handleAddMedia(media)}
               />
             );
           }

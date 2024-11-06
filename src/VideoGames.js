@@ -93,10 +93,24 @@ const VideoGames = () => {
       played: [],
     };
 
+    let developerName = game.developers?.[0]?.name || "Unknown Developer";
+
+    if (developerName === "Unknown Developer") {
+      try {
+        const detailsResponse = await axios.get(
+          `https://api.rawg.io/api/games/${game.id}?key=${API_KEY}`
+        );
+        developerName =
+          detailsResponse.data.developers?.[0]?.name || "Unknown Developer";
+      } catch (error) {
+        console.error("Error fetching developer details:", error);
+      }
+    }
+
     const gameToAdd = {
       title: game.name,
       gameId: game.id,
-      developer: game.developers?.[0]?.name || "Unknown Developer",
+      developer: developerName,
       cover: game.background_image || "",
       avgRating: game.rating || "N/A",
       userRating: 0,
@@ -240,7 +254,11 @@ const VideoGames = () => {
           </table>
         </div>
       </div>
-      <Recommended recommendedMedia={recommendedGames} mediaType="game" />
+      <Recommended
+        recommendedMedia={recommendedGames}
+        mediaType="game"
+        handleAddMedia={handleAddGameFromSearch}
+      />
       {selectedGameId && (
         <MediaDetails
           mediaId={selectedGameId}

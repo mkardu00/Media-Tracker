@@ -238,7 +238,11 @@ const Books = () => {
         </div>
       </div>
 
-      <Recommended recommendedMedia={recommendedBooks} mediaType="book" />
+      <Recommended
+        recommendedMedia={recommendedBooks}
+        mediaType="book"
+        handleAddMedia={handleAddBookFromSearch}
+      />
       {selectedBookId && (
         <MediaDetails
           mediaId={selectedBookId}
