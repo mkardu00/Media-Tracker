@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-const StarRating = ({ movieId, initialRating, onRatingChange }) => {
+const StarRating = ({ mediaId, initialRating, onRatingChange }) => {
   const [rating, setRating] = useState(initialRating);
 
   const handleStarClick = (newRating) => {
     setRating(newRating);
-    onRatingChange(movieId, newRating);
+    onRatingChange(mediaId, newRating);
   };
 
   return (

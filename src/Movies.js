@@ -290,7 +290,7 @@ const Movies = () => {
                   <td>{movie.avgRating}</td>
                   <td>
                     <StarRating
-                      movieId={movie.movieId}
+                      mediaId={movie.movieId}
                       onRatingChange={handleUserRatingChange}
                       initialRating={movie.userRating}
                     />

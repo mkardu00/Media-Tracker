@@ -137,6 +137,7 @@ const Books = () => {
   const handleCloseDetails = () => {
     setSelectedBookId(null);
   };
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearchBooks();
@@ -152,6 +153,18 @@ const Books = () => {
     const updatedBooks = currentBooks.map((book) =>
       book.bookId === bookId ? { ...book, userRating: rating } : book
     );
+
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
+    userBooksObj[activeTab] = updatedBooks;
+    userData[currentUser].books = userBooksObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
     setCurrentBooks(updatedBooks);
   };
 
@@ -219,10 +232,9 @@ const Books = () => {
                   <td>{book.avgRating}</td>
                   <td>
                     <StarRating
-                      rating={book.userRating}
-                      onRatingChange={(rating) =>
-                        handleUserRatingChange(book.bookId, rating)
-                      }
+                      mediaId={book.bookId}
+                      onRatingChange={handleUserRatingChange}
+                      initialRating={book.userRating}
                     />
                   </td>
                   <td>

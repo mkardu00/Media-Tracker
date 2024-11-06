@@ -166,11 +166,26 @@ const VideoGames = () => {
     setSearchResults([]);
     setSearchQuery("");
   };
+
   const handleUserRatingChange = (gameId, rating) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
     const updatedGames = currentGames.map((game) =>
       game.gameId === gameId ? { ...game, userRating: rating } : game
     );
     setCurrentGames(updatedGames);
+
+    userGamesObj[activeTab] = userGamesObj[activeTab].map((game) =>
+      game.gameId === gameId ? { ...game, userRating: rating } : game
+    );
+
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
   };
 
   return (
@@ -236,10 +251,9 @@ const VideoGames = () => {
                   <td>{game.avgRating}</td>
                   <td>
                     <StarRating
-                      rating={game.userRating}
-                      onRatingChange={(rating) =>
-                        handleUserRatingChange(game.gameId, rating)
-                      }
+                      mediaId={game.gameId}
+                      onRatingChange={handleUserRatingChange}
+                      initialRating={game.userRating}
                     />
                   </td>
                   <td>
