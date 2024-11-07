@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileImg from "./assets/profile.png";
 import logoImg from "./assets/logo.png";
+import { FaBook, FaGamepad, FaFilm } from "react-icons/fa";
 import "./NavBar.css";
 
 const NavBar = () => {
@@ -33,7 +34,7 @@ const NavBar = () => {
                   to="/books"
                   className={location.pathname === "/books" ? "active" : ""}
                 >
-                  Books
+                  <FaBook className="nav-icon" /> Books
                 </Link>
               </li>
               <li>
@@ -43,7 +44,7 @@ const NavBar = () => {
                     location.pathname === "/video-games" ? "active" : ""
                   }
                 >
-                  Video Games
+                  <FaGamepad className="nav-icon" /> Video Games
                 </Link>
               </li>
               <li>
@@ -51,7 +52,7 @@ const NavBar = () => {
                   to="/movies"
                   className={location.pathname === "/movies" ? "active" : ""}
                 >
-                  Movies & TV Shows
+                  <FaFilm className="nav-icon" /> Movies & TV Shows
                 </Link>
               </li>
             </ul>

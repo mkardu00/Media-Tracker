@@ -1,5 +1,6 @@
 import React from "react";
-import "./BooksTabs.css";
+import "./Search.css";
+import { FaEye, FaTrashAlt } from "react-icons/fa"; // Ikone za detalje i brisanje
 
 const Search = ({
   searchQuery,
@@ -34,7 +35,8 @@ const Search = ({
               : mediaType === "game"
               ? "🎮 "
               : ""}
-            {item.volumeInfo?.title || item.Title || item.name}{" "}
+            {item.volumeInfo?.title || item.Title || item.name}
+
             <div className="book-buttons">
               <button onClick={() => handleAddMediaFromSearch(item)}>
                 Add to {activeTab}
@@ -44,7 +46,14 @@ const Search = ({
                   handleMediaClick(item.id || item.imdbID || item.gameId)
                 }
               >
-                View Details
+                <FaEye />
+              </button>
+              <button
+                onClick={() =>
+                  handleMediaClick(item.id || item.imdbID || item.gameId)
+                }
+              >
+                <FaTrashAlt />
               </button>
             </div>
           </li>
