@@ -23,7 +23,7 @@ const VideoGames = () => {
   const [currentGames, setCurrentGames] = useState(userGamesObj[activeTab]);
   const [recommendedGames, setRecommendedGames] = useState([]);
 
-  const API_KEY = process.env.REACT_APP_RAWG_API_KEY;
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
@@ -40,7 +40,7 @@ const VideoGames = () => {
     if (searchQuery.trim() !== "") {
       try {
         const response = await axios.get(
-          `https://api.rawg.io/api/games?key=${API_KEY}&page_size=5&search=${searchQuery}`
+          `${BASE_URL}/api/gamesearch?query=${searchQuery}`
         );
         setSearchResults(response.data.results || []);
       } catch (error) {
@@ -55,7 +55,7 @@ const VideoGames = () => {
 
       try {
         const gameDetailsResponse = await axios.get(
-          `https://api.rawg.io/api/games/${firstGameId}?key=${API_KEY}`
+          `${BASE_URL}/api/gamedetails?gameId=${firstGameId}`
         );
         const gameDetails = gameDetailsResponse.data;
 
@@ -63,24 +63,20 @@ const VideoGames = () => {
           const genreId = gameDetails.genres[0].id;
 
           const recommendedResponse = await axios.get(
-            `https://api.rawg.io/api/games?genres=${genreId}&key=${API_KEY}&rating=4`
+            `${BASE_URL}/api/recommendedgames?genreId=${genreId}`
           );
-          const recommendedGamesData = recommendedResponse.data.results || [];
-
-          setRecommendedGames(recommendedGamesData);
+          setRecommendedGames(recommendedResponse.data.results || []);
         } else {
           setRecommendedGames([]);
         }
       } catch (error) {
-        console.error(
-          "Error fetching game details or recommended games:",
-          error
-        );
+        console.error("Error fetching recommended games:", error);
       }
     } else {
       setRecommendedGames([]);
     }
   };
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
@@ -98,7 +94,7 @@ const VideoGames = () => {
     if (developerName === "Unknown Developer") {
       try {
         const detailsResponse = await axios.get(
-          `https://api.rawg.io/api/games/${game.id}?key=${API_KEY}`
+          `${BASE_URL}/api/gamedetails?gameId=${game.id}`
         );
         developerName =
           detailsResponse.data.developers?.[0]?.name || "Unknown Developer";

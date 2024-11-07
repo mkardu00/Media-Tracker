@@ -22,9 +22,7 @@ const Books = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [currentBooks, setCurrentBooks] = useState(userBooksObj[activeTab]);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
-
-  const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
-
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
     const userBooksObj = userData[currentUser]?.books || {
@@ -40,7 +38,7 @@ const Books = () => {
     if (searchQuery.trim() !== "") {
       try {
         const response = await axios.get(
-          `https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&key=${API_KEY}`
+          `${BASE_URL}/api/booksearch?query=${searchQuery}`
         );
         setSearchResults(response.data.items || []);
       } catch (error) {
@@ -57,7 +55,7 @@ const Books = () => {
       if (author) {
         try {
           const response = await axios.get(
-            `https://www.googleapis.com/books/v1/volumes?q=inauthor:${author}&key=${API_KEY}`
+            `${BASE_URL}/api/recommendedbooks?author=${author}`
           );
 
           const filteredBooks =
@@ -77,7 +75,6 @@ const Books = () => {
       setRecommendedBooks([]);
     }
   };
-
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };

@@ -25,7 +25,7 @@ const Movies = () => {
   const [genreFilter, setGenreFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState(0);
 
-  const API_KEY = process.env.REACT_APP_OMDB_API_KEY;
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
@@ -43,36 +43,24 @@ const Movies = () => {
     if (searchQuery.trim() !== "") {
       try {
         const response = await axios.get(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchQuery}`
+          `${BASE_URL}/api/moviesearch?query=${searchQuery}`
         );
-        console.log("Search results ", response.data);
+        console.log("Search results", response.data);
         setSearchResults(response.data.Search || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
     }
   };
-
   const fetchRecommendedMovies = async (movies) => {
     if (movies.length > 0) {
-      const firstMovieId = movies[0].movieId;
-
+      const firstMovie = movies[0];
+      const genre = firstMovie.genre.split(",")[1].trim();
       try {
-        const movieDetailsResponse = await axios.get(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&i=${firstMovieId}`
+        const response = await axios.get(
+          `${BASE_URL}/api/recommendedmovies?genre=${genre}`
         );
-        const movieDetails = movieDetailsResponse.data;
-
-        if (movieDetails.Genre) {
-          const genre = movieDetails.Genre.split(", ")[0];
-
-          const recommendedResponse = await axios.get(
-            `http://www.omdbapi.com/?apikey=${API_KEY}&s=${genre}`
-          );
-          setRecommendedMovies(recommendedResponse.data.Search || []);
-        } else {
-          setRecommendedMovies([]);
-        }
+        setRecommendedMovies(response.data.Search || []);
       } catch (error) {
         console.error("Error fetching recommended movies:", error);
       }
@@ -80,7 +68,6 @@ const Movies = () => {
       setRecommendedMovies([]);
     }
   };
-
   const applyFilters = (movies) => {
     return movies.filter((movie) => {
       const genreMatch = genreFilter
@@ -113,7 +100,7 @@ const Movies = () => {
 
     try {
       const movieDetailsResponse = await axios.get(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${movie.imdbID}`
+        `${BASE_URL}/api/moviedetails?movieId=${movie.imdbID}`
       );
       const movieDetails = movieDetailsResponse.data;
 
