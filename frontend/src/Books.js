@@ -5,7 +5,7 @@ import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import Search from "./Search";
 import StarRating from "./StarRating";
-import { FaEye, FaTrashAlt } from "react-icons/fa";
+import { FaEye, FaTrashAlt, FaCheckCircle } from "react-icons/fa";
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -95,6 +95,10 @@ const Books = () => {
       cover: book.volumeInfo.imageLinks?.thumbnail,
       avgRating: book.volumeInfo.averageRating || "N/A",
       userRating: 0,
+      startDate:
+        activeTab === "reading" ? new Date().toISOString().split("T")[0] : null,
+      endDate:
+        activeTab === "read" ? new Date().toISOString().split("T")[0] : null,
     };
 
     if (userBooksObj[activeTab].some((b) => b.bookId === bookToAdd.bookId)) {
@@ -166,6 +170,51 @@ const Books = () => {
     setCurrentBooks(updatedBooks);
   };
 
+  const handleMarkAsRead = (book) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
+    const updatedBook = {
+      ...book,
+      endDate: new Date().toISOString().split("T")[0],
+    };
+    userBooksObj.read.push(updatedBook);
+    userBooksObj.reading = userBooksObj.reading.filter(
+      (b) => b.bookId !== book.bookId
+    );
+
+    userData[currentUser].books = userBooksObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setCurrentBooks([...userBooksObj[activeTab]]);
+  };
+
+  const handleMoveToReading = (book) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
+    const updatedBook = {
+      ...book,
+      startDate: new Date().toISOString().split("T")[0],
+    };
+
+    userBooksObj.reading.push(updatedBook);
+    userBooksObj.wantToRead = userBooksObj.wantToRead.filter(
+      (b) => b.bookId !== book.bookId
+    );
+
+    userData[currentUser].books = userBooksObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setCurrentBooks([...userBooksObj[activeTab]]);
+  };
+
   return (
     <>
       <Search
@@ -213,6 +262,8 @@ const Books = () => {
                 <th>Average Rating</th>
                 <th>Your Rating</th>
                 <th>Progress</th>
+                {activeTab === "reading" && <th>Start Date</th>}
+                {activeTab === "read" && <th>End Date</th>}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -251,7 +302,25 @@ const Books = () => {
                       ></div>
                     </div>
                   </td>
+                  {activeTab === "reading" && <td>{book.startDate}</td>}
+                  {activeTab === "read" && <td>{book.endDate}</td>}
                   <td>
+                    {activeTab === "wantToRead" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => handleMoveToReading(book)}
+                      >
+                        <FaCheckCircle /> Move to Reading
+                      </button>
+                    )}
+                    {activeTab === "reading" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => handleMarkAsRead(book)}
+                      >
+                        <FaCheckCircle /> Mark as Read
+                      </button>
+                    )}
                     <button
                       className="details-books-button"
                       onClick={() => handleBookClick(book.bookId)}
