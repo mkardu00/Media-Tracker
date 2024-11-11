@@ -15,8 +15,8 @@ const Recommended = ({ recommendedMedia, mediaType, handleAddMedia }) => {
   };
 
   return (
-    <div>
-      <h2>
+    <div className="recommended-container">
+      <h2 className="recommended-title">
         Recommended{" "}
         {mediaType === "book"
           ? "Books"

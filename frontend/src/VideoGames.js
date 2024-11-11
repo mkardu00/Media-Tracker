@@ -5,6 +5,7 @@ import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import StarRating from "./StarRating";
 import Search from "./Search";
+import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 const VideoGames = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -253,10 +254,19 @@ const VideoGames = () => {
                     />
                   </td>
                   <td>
-                    <button onClick={() => handleGameClick(game.gameId)}>
-                      Details
+                    <button
+                      className="details-books-button"
+                      onClick={() => handleGameClick(game.gameId)}
+                    >
+                      <FaEye />
                     </button>
-                    <button onClick={() => handleDeleteGame(game)}>❌</button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteGame(game)}
+                    >
+                      {" "}
+                      <FaTrashAlt />
+                    </button>
                   </td>
                 </tr>
               ))}

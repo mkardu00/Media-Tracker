@@ -1,6 +1,6 @@
 import React from "react";
 import "./Search.css";
-import { FaEye, FaTrashAlt } from "react-icons/fa"; // Ikone za detalje i brisanje
+import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 const Search = ({
   searchQuery,

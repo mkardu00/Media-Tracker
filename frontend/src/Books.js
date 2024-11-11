@@ -5,6 +5,7 @@ import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import Search from "./Search";
 import StarRating from "./StarRating";
+import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -211,6 +212,7 @@ const Books = () => {
                 <th>Author</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
+                <th>Progress</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -235,10 +237,33 @@ const Books = () => {
                     />
                   </td>
                   <td>
-                    <button onClick={() => handleBookClick(book.bookId)}>
-                      Details
+                    <div className="progress-bar-container">
+                      <div
+                        className="progress-bar"
+                        style={{
+                          width:
+                            activeTab === "wantToRead"
+                              ? "33%"
+                              : activeTab === "reading"
+                              ? "66%"
+                              : "100%",
+                        }}
+                      ></div>
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      className="details-books-button"
+                      onClick={() => handleBookClick(book.bookId)}
+                    >
+                      <FaEye />
                     </button>
-                    <button onClick={() => handleDeleteBook(book)}>❌</button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteBook(book)}
+                    >
+                      <FaTrashAlt />
+                    </button>
                   </td>
                 </tr>
               ))}

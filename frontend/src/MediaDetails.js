@@ -46,10 +46,12 @@ const MediaDetails = ({ mediaId, mediaType, onClose }) => {
   return (
     <div className="media-details-modal">
       <div className="media-details-content">
-        <button onClick={onClose} className="close-button">
+        <button onClick={onClose} className="close-button" aria-label="Close">
           X
         </button>
-        <h2>{mediaDetails.title || mediaDetails.name || mediaDetails.Title}</h2>
+        <h2 className="media-title">
+          {mediaDetails.title || mediaDetails.name || mediaDetails.Title}
+        </h2>
 
         {mediaType === "book" && mediaDetails.authors && (
           <p className="media-details-p">
@@ -100,17 +102,26 @@ const MediaDetails = ({ mediaId, mediaType, onClose }) => {
             <img
               src={mediaDetails.imageLinks.thumbnail}
               alt={mediaDetails.title}
+              className="media-image"
             />
           )}
 
         {mediaType === "movie" &&
           mediaDetails.Poster &&
           mediaDetails.Poster !== "N/A" && (
-            <img src={mediaDetails.Poster} alt={mediaDetails.Title} />
+            <img
+              src={mediaDetails.Poster}
+              alt={mediaDetails.Title}
+              className="media-image"
+            />
           )}
 
         {mediaType === "game" && mediaDetails.background_image && (
-          <img src={mediaDetails.background_image} alt={mediaDetails.name} />
+          <img
+            src={mediaDetails.background_image}
+            alt={mediaDetails.name}
+            className="media-image"
+          />
         )}
 
         {mediaType === "game" && mediaDetails.released && (
