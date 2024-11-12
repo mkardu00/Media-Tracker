@@ -24,6 +24,9 @@ const Books = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [currentBooks, setCurrentBooks] = useState(userBooksObj[activeTab]);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
+  const [editingStartDate, setEditingStartDate] = useState(null);
+  const [editingEndDate, setEditingEndDate] = useState(null);
+
   const BASE_URL = process.env.REACT_APP_BACKEND_URL;
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData")) || {};
@@ -215,6 +218,25 @@ const Books = () => {
     setCurrentBooks([...userBooksObj[activeTab]]);
   };
 
+  const handleDateChange = (bookId, dateType, newDate) => {
+    const updatedBooks = currentBooks.map((book) =>
+      book.bookId === bookId ? { ...book, [dateType]: newDate } : book
+    );
+
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userBooksObj = userData[currentUser]?.books || {
+      wantToRead: [],
+      reading: [],
+      read: [],
+    };
+
+    userBooksObj[activeTab] = updatedBooks;
+    userData[currentUser].books = userBooksObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentBooks(updatedBooks);
+  };
+
   return (
     <>
       <Search
@@ -304,16 +326,50 @@ const Books = () => {
                   </td>
                   {activeTab === "reading" && (
                     <td>
-                      {book.startDate
-                        ? format(new Date(book.startDate), "dd/MM/yyyy")
-                        : "N/A"}
+                      {editingStartDate === book.bookId ? (
+                        <input
+                          type="date"
+                          value={book.startDate}
+                          onChange={(e) =>
+                            handleDateChange(
+                              book.bookId,
+                              "startDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingStartDate(null)}
+                        />
+                      ) : (
+                        <span onClick={() => setEditingStartDate(book.bookId)}>
+                          {book.startDate
+                            ? format(new Date(book.startDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
                     </td>
                   )}
                   {activeTab === "read" && (
                     <td>
-                      {book.endDate
-                        ? format(new Date(book.endDate), "dd/MM/yyyy")
-                        : "N/A"}
+                      {editingEndDate === book.bookId ? (
+                        <input
+                          type="date"
+                          value={book.endDate}
+                          onChange={(e) =>
+                            handleDateChange(
+                              book.bookId,
+                              "endDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingEndDate(null)}
+                        />
+                      ) : (
+                        <span onClick={() => setEditingEndDate(book.bookId)}>
+                          {book.endDate
+                            ? format(new Date(book.endDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
                     </td>
                   )}
 
