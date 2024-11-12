@@ -6,6 +6,7 @@ import Recommended from "./Recommended";
 import StarRating from "./StarRating";
 import Search from "./Search";
 import { FaEye, FaTrashAlt } from "react-icons/fa";
+import { format } from "date-fns";
 
 const VideoGames = () => {
   const currentUser = localStorage.getItem("currentUser");

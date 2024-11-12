@@ -6,6 +6,7 @@ import Recommended from "./Recommended";
 import StarRating from "./StarRating";
 import Search from "./Search";
 import { FaEye, FaTrashAlt } from "react-icons/fa";
+import { format } from "date-fns";
 
 const Movies = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -56,7 +57,7 @@ const Movies = () => {
   const fetchRecommendedMovies = async (movies) => {
     if (movies.length > 0) {
       const firstMovie = movies[0];
-      const genre = firstMovie.genre.split(",")[1].trim();
+      const genre = firstMovie.genre.split(",")[0].trim();
       try {
         const response = await axios.get(
           `${BASE_URL}/api/recommendedmovies?genre=${genre}`

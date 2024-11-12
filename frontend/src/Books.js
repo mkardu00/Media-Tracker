@@ -6,6 +6,7 @@ import Recommended from "./Recommended";
 import Search from "./Search";
 import StarRating from "./StarRating";
 import { FaEye, FaTrashAlt, FaCheckCircle } from "react-icons/fa";
+import { format } from "date-fns";
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -96,9 +97,8 @@ const Books = () => {
       avgRating: book.volumeInfo.averageRating || "N/A",
       userRating: 0,
       startDate:
-        activeTab === "reading" ? new Date().toISOString().split("T")[0] : null,
-      endDate:
-        activeTab === "read" ? new Date().toISOString().split("T")[0] : null,
+        activeTab === "reading" ? format(new Date(), "dd/MM/yyyy") : null,
+      endDate: activeTab === "read" ? format(new Date(), "dd/MM/yyyy") : null,
     };
 
     if (userBooksObj[activeTab].some((b) => b.bookId === bookToAdd.bookId)) {
@@ -180,7 +180,7 @@ const Books = () => {
 
     const updatedBook = {
       ...book,
-      endDate: new Date().toISOString().split("T")[0],
+      endDate: format(new Date(), "dd/MM/yyyy"),
     };
     userBooksObj.read.push(updatedBook);
     userBooksObj.reading = userBooksObj.reading.filter(
@@ -202,7 +202,7 @@ const Books = () => {
 
     const updatedBook = {
       ...book,
-      startDate: new Date().toISOString().split("T")[0],
+      startDate: format(new Date(), "dd/MM/yyyy"),
     };
 
     userBooksObj.reading.push(updatedBook);
@@ -302,8 +302,21 @@ const Books = () => {
                       ></div>
                     </div>
                   </td>
-                  {activeTab === "reading" && <td>{book.startDate}</td>}
-                  {activeTab === "read" && <td>{book.endDate}</td>}
+                  {activeTab === "reading" && (
+                    <td>
+                      {book.startDate
+                        ? format(new Date(book.startDate), "dd/MM/yyyy")
+                        : "N/A"}
+                    </td>
+                  )}
+                  {activeTab === "read" && (
+                    <td>
+                      {book.endDate
+                        ? format(new Date(book.endDate), "dd/MM/yyyy")
+                        : "N/A"}
+                    </td>
+                  )}
+
                   <td>
                     {activeTab === "wantToRead" && (
                       <button
