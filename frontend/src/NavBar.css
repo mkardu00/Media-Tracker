@@ -95,6 +95,7 @@ nav ul li a.active {
   object-fit: cover;
   margin-left: 10px;
   margin-right: 10px;
+  color: white;
 }
 
 .sign-out-button {

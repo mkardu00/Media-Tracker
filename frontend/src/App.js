@@ -9,6 +9,7 @@ import HomePage from "./HomePage";
 import PrivateRoute from "./PrivateRoute";
 import "./NavBar.css";
 import UserHome from "./UserHome";
+import Profile from "./Profile";
 
 function App() {
   let userDataInLocalStorage = JSON.parse(localStorage.getItem("userData"));
@@ -149,6 +150,15 @@ function App() {
             element={
               <PrivateRoute>
                 <Movies />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />

@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileImg from "./assets/profile.png";
 import logoImg from "./assets/logo.png";
-import { FaBook, FaGamepad, FaFilm } from "react-icons/fa";
+import { FaBook, FaGamepad, FaFilm, FaUser } from "react-icons/fa";
 import "./NavBar.css";
 
 const NavBar = () => {
@@ -61,12 +61,13 @@ const NavBar = () => {
           {currentUser && (
             <div className="nav-right">
               <div className="user-info">
-                <img
-                  src={profileImg}
-                  alt="User Avatar"
-                  className="user-avatar"
-                />
-                <span className="greeting">Hello, {currentUser}</span>
+                <Link
+                  to="/profile"
+                  className={location.pathname === "/profile" ? "active" : ""}
+                >
+                  <FaUser className="user-avatar" />
+                  <span className="greeting">Hello, {currentUser}</span>
+                </Link>
               </div>
               <button onClick={handleSignOut} className="sign-out-button">
                 Sign Out
