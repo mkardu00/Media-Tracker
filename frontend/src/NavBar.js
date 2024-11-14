@@ -11,7 +11,6 @@ const NavBar = () => {
   const isHomePage = location && location.pathname === "/";
   const currentUser = localStorage.getItem("currentUser");
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
-  console.log("User DAta", userData[currentUser].name);
 
   const handleSignOut = () => {
     localStorage.removeItem("currentUser");
@@ -69,7 +68,7 @@ const NavBar = () => {
                 >
                   <FaUser className="user-avatar" />
                   <span className="greeting">
-                    {userData[currentUser].name.toUpperCase()}
+                    {userData[currentUser]?.name.toUpperCase()}
                   </span>
                 </Link>
               </div>

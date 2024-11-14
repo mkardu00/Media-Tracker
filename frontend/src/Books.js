@@ -5,7 +5,7 @@ import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import Search from "./Search";
 import StarRating from "./StarRating";
-import { FaEye, FaTrashAlt, FaCheckCircle } from "react-icons/fa";
+import { FaEye, FaTrashAlt, FaCheckCircle, FaHeart } from "react-icons/fa";
 import { format } from "date-fns";
 
 const Books = () => {
@@ -26,6 +26,9 @@ const Books = () => {
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [editingStartDate, setEditingStartDate] = useState(null);
   const [editingEndDate, setEditingEndDate] = useState(null);
+  const [favorites, setFavorites] = useState(
+    userData[currentUser]?.favorites || []
+  );
 
   const BASE_URL = process.env.REACT_APP_BACKEND_URL;
   useEffect(() => {
@@ -50,6 +53,27 @@ const Books = () => {
         console.error("Error fetching books:", error);
       }
     }
+  };
+
+  const toggleFavorite = (book) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const currentFavorites = userData[currentUser]?.favorites || [];
+
+    let updatedFavorites;
+    if (currentFavorites.some((favBook) => favBook.bookId === book.bookId)) {
+      updatedFavorites = currentFavorites.filter(
+        (favBook) => favBook.bookId !== book.bookId
+      );
+    } else {
+      updatedFavorites = [...currentFavorites, book];
+    }
+
+    userData[currentUser] = {
+      ...userData[currentUser],
+      favorites: updatedFavorites,
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setFavorites(updatedFavorites);
   };
 
   const fetchRecommendedBooks = async (books) => {
@@ -402,6 +426,22 @@ const Books = () => {
                     >
                       <FaTrashAlt />
                     </button>
+                    {activeTab === "read" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => toggleFavorite(book)}
+                      >
+                        <FaHeart
+                          color={
+                            favorites.some(
+                              (favBook) => favBook.bookId === book.bookId
+                            )
+                              ? "red"
+                              : "gray"
+                          }
+                        />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
