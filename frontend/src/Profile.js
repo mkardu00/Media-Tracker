@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Profile.css";
 import { FaPencilAlt } from "react-icons/fa";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const Profile = () => {
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const currentUser = localStorage.getItem("currentUser");
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
 
@@ -17,19 +19,27 @@ const Profile = () => {
     country: currentUserData.country || "Country",
     birthdate: currentUserData.birthdate || "1990-01-01",
   };
-
   const [userDetails, setUserDetails] = useState(userProfileObj);
   const [isEditing, setIsEditing] = useState(false);
+  const handleSavePassword = (newPassword) => {
+    const updatedUserData = {
+      ...userData,
+      [currentUser]: { ...userData[currentUser], password: newPassword },
+    };
+
+    localStorage.setItem("userData", JSON.stringify(updatedUserData));
+    setIsPasswordModalOpen(false);
+    alert("Password changed successfully!");
+  };
 
   const saveChanges = () => {
     const updatedUserData = {
       ...userData,
       [currentUser]: { ...userData[currentUser], ...userDetails },
     };
-
     localStorage.setItem("userData", JSON.stringify(updatedUserData));
-
     setIsEditing(false);
+    alert("Profile updated successfully!");
   };
 
   const handleInputChange = (e) => {
@@ -72,27 +82,19 @@ const Profile = () => {
 
         <div className="profile-field">
           <label>Email</label>
-          {isEditing ? (
-            <input
-              type="email"
-              name="email"
-              value={userDetails.email}
-              onChange={handleInputChange}
-            />
-          ) : (
-            <span>{userDetails.email}</span>
-          )}
+
+          <span>{userDetails.email}</span>
         </div>
 
         <div className="profile-field">
           <label>Password</label>
           {isEditing ? (
-            <input
-              type="password"
-              name="password"
-              value={userDetails.password}
-              onChange={handleInputChange}
-            />
+            <button
+              className="change-password-button"
+              onClick={() => setIsPasswordModalOpen(true)}
+            >
+              Change Password
+            </button>
           ) : (
             <span>{"********"}</span>
           )}
@@ -154,6 +156,11 @@ const Profile = () => {
           )}
         </div>
       </div>
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        onSave={handleSavePassword}
+      />
     </div>
   );
 };
