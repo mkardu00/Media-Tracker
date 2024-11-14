@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Profile.css";
 import { FaPencilAlt } from "react-icons/fa";
 import ChangePasswordModal from "./ChangePasswordModal";
+import Favorite from "./Favorite";
 
 const Profile = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -21,6 +22,7 @@ const Profile = () => {
   };
   const [userDetails, setUserDetails] = useState(userProfileObj);
   const [isEditing, setIsEditing] = useState(false);
+
   const handleSavePassword = (newPassword) => {
     const updatedUserData = {
       ...userData,
@@ -161,6 +163,7 @@ const Profile = () => {
         onClose={() => setIsPasswordModalOpen(false)}
         onSave={handleSavePassword}
       />
+      <Favorite />
     </div>
   );
 };

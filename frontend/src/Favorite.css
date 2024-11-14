@@ -1,0 +1,53 @@
+.favorite-books-section {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.favorite-books-section h2 {
+  font-size: 2rem;
+  color: #1a1a1a;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  padding: 15px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+.book-cover {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.book-info h3 {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.book-info p {
+  font-size: 0.9rem;
+  color: #666;
+}
