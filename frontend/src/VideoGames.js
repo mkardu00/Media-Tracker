@@ -5,7 +5,7 @@ import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import StarRating from "./StarRating";
 import Search from "./Search";
-import { FaEye, FaTrashAlt } from "react-icons/fa";
+import { FaEye, FaTrashAlt, FaCheckCircle, FaHeart } from "react-icons/fa";
 import { format } from "date-fns";
 
 const VideoGames = () => {
@@ -24,6 +24,11 @@ const VideoGames = () => {
   const [selectedGameId, setSelectedGameId] = useState(null);
   const [currentGames, setCurrentGames] = useState(userGamesObj[activeTab]);
   const [recommendedGames, setRecommendedGames] = useState([]);
+  const [editingStartDate, setEditingStartDate] = useState(null);
+  const [editingEndDate, setEditingEndDate] = useState(null);
+  const [favorites, setFavorites] = useState(
+    userData[currentUser]?.favoriteGames || []
+  );
 
   const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -49,6 +54,27 @@ const VideoGames = () => {
         console.error("Error fetching video games:", error);
       }
     }
+  };
+
+  const toggleFavorite = (game) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const currentFavorites = userData[currentUser]?.favoriteGames || [];
+
+    let updatedFavorites;
+    if (currentFavorites.some((favGame) => favGame.gameId === game.gameId)) {
+      updatedFavorites = currentFavorites.filter(
+        (favGame) => favGame.gameId !== game.gameId
+      );
+    } else {
+      updatedFavorites = [...currentFavorites, game];
+    }
+
+    userData[currentUser] = {
+      ...userData[currentUser],
+      favoriteGames: updatedFavorites,
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setFavorites(updatedFavorites);
   };
 
   const fetchRecommendedGames = async (games) => {
@@ -112,6 +138,10 @@ const VideoGames = () => {
       cover: game.background_image || "",
       avgRating: game.rating || "N/A",
       userRating: 0,
+
+      startDate:
+        activeTab === "reading" ? format(new Date(), "yyyy-MM-dd") : null,
+      endDate: activeTab === "read" ? format(new Date(), "yyyy-MM-dd") : null,
     };
 
     if (userGamesObj[activeTab].some((g) => g.gameId === gameToAdd.gameId)) {
@@ -186,6 +216,71 @@ const VideoGames = () => {
     localStorage.setItem("userData", JSON.stringify(userData));
   };
 
+  const handleMarkAsPlayed = (game) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
+    const updatedGame = {
+      ...game,
+      endDate: format(new Date(), "yyyy-MM-dd"),
+    };
+
+    userGamesObj.played.push(updatedGame);
+    userGamesObj.playing = userGamesObj.playing.filter(
+      (g) => g.gameId !== game.gameId
+    );
+
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setCurrentGames([...userGamesObj[activeTab]]);
+  };
+
+  const handleMoveToPlaying = (game) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
+    const updatedGame = {
+      ...game,
+      startDate: format(new Date(), "yyyy-MM-dd"),
+    };
+
+    userGamesObj.playing.push(updatedGame);
+    userGamesObj.wantToPlay = userGamesObj.wantToPlay.filter(
+      (g) => g.gameId !== game.gameId
+    );
+
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setCurrentGames([...userGamesObj[activeTab]]);
+  };
+
+  const handleDateChange = (gameId, dateType, newDate) => {
+    const updatedGames = currentGames.map((game) =>
+      game.gameId === gameId ? { ...game, [dateType]: newDate } : game
+    );
+
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userGamesObj = userData[currentUser]?.games || {
+      wantToPlay: [],
+      playing: [],
+      played: [],
+    };
+
+    userGamesObj[activeTab] = updatedGames;
+    userData[currentUser].games = userGamesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentGames(updatedGames);
+  };
+
   return (
     <>
       <Search
@@ -200,6 +295,7 @@ const VideoGames = () => {
         handleKeyPress={handleKeyPress}
         mediaType="game"
       />
+
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
@@ -231,6 +327,9 @@ const VideoGames = () => {
                 <th>Developer</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
+
+                {activeTab === "playing" && <th>Date Started </th>}
+                {activeTab === "played" && <th>Date Finished</th>}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -254,7 +353,75 @@ const VideoGames = () => {
                       initialRating={game.userRating}
                     />
                   </td>
+
+                  {activeTab === "playing" && (
+                    <td>
+                      {editingStartDate === game.gameId ? (
+                        <input
+                          type="date"
+                          value={game.startDate || ""}
+                          onChange={(e) =>
+                            handleDateChange(
+                              game.gameId,
+                              "startDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingStartDate(null)}
+                        />
+                      ) : (
+                        <span onClick={() => setEditingStartDate(game.gameId)}>
+                          {game.startDate &&
+                          !isNaN(new Date(game.startDate).getTime())
+                            ? format(new Date(game.startDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
+                    </td>
+                  )}
+                  {activeTab === "played" && (
+                    <td>
+                      {editingEndDate === game.gameId ? (
+                        <input
+                          type="date"
+                          value={game.endDate || ""}
+                          onChange={(e) =>
+                            handleDateChange(
+                              game.gameId,
+                              "endDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingEndDate(null)}
+                        />
+                      ) : (
+                        <span onClick={() => setEditingEndDate(game.gameId)}>
+                          {game.endDate &&
+                          !isNaN(new Date(game.endDate).getTime())
+                            ? format(new Date(game.endDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
+                    </td>
+                  )}
+
                   <td>
+                    {activeTab === "wantToPlay" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => handleMoveToPlaying(game)}
+                      >
+                        <FaCheckCircle /> Move to Playing
+                      </button>
+                    )}
+                    {activeTab === "playing" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => handleMarkAsPlayed(game)}
+                      >
+                        <FaCheckCircle /> Mark as Played
+                      </button>
+                    )}
                     <button
                       className="details-books-button"
                       onClick={() => handleGameClick(game.gameId)}
@@ -265,9 +432,24 @@ const VideoGames = () => {
                       className="delete-button"
                       onClick={() => handleDeleteGame(game)}
                     >
-                      {" "}
                       <FaTrashAlt />
                     </button>
+                    {activeTab === "played" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => toggleFavorite(game)}
+                      >
+                        <FaHeart
+                          color={
+                            favorites.some(
+                              (favGame) => favGame.gameId === game.gameId
+                            )
+                              ? "red"
+                              : "gray"
+                          }
+                        />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -275,6 +457,7 @@ const VideoGames = () => {
           </table>
         </div>
       </div>
+
       <Recommended
         recommendedMedia={recommendedGames}
         mediaType="game"

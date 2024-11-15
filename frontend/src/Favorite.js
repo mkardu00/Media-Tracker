@@ -15,7 +15,11 @@ const FavoriteBooks = () => {
         {favoriteBooks.length > 0 ? (
           favoriteBooks.map((book, index) => (
             <div key={index} className="book-card">
-              <img src={book.cover} alt={book.title} className="book-cover" />
+              <img
+                src={book.cover}
+                alt={book.title}
+                className="book-cover-favorite"
+              />
               <div className="book-info">
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>

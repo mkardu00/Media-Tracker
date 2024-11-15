@@ -54,6 +54,7 @@ const Movies = () => {
       }
     }
   };
+
   const fetchRecommendedMovies = async (movies) => {
     if (movies.length > 0) {
       const firstMovie = movies[0];
@@ -70,6 +71,7 @@ const Movies = () => {
       setRecommendedMovies([]);
     }
   };
+
   const applyFilters = (movies) => {
     return movies.filter((movie) => {
       const genreMatch = genreFilter
@@ -117,6 +119,8 @@ const Movies = () => {
           movieDetails.Director !== "N/A"
             ? movieDetails.Director
             : movieDetails.Writer || "N/A",
+        addedDate: format(new Date(), "yyyy-MM-dd"),
+        watchedDate: null,
       };
 
       userMoviesObj[activeTab].push(movieToAdd);
@@ -190,6 +194,34 @@ const Movies = () => {
     setCurrentMovies(updatedMovies);
   };
 
+  const handleMarkAsWatched = (movie) => {
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userMoviesObj = userData[currentUser]?.movies || {
+      favorites: [],
+      recentlyWatched: [],
+      toWatch: [],
+    };
+
+    const updatedMovies = userMoviesObj["toWatch"].filter(
+      (m) => m.movieId !== movie.movieId
+    );
+    movie.watchedDate = format(new Date(), "yyyy-MM-dd");
+
+    userMoviesObj["recentlyWatched"].push(movie);
+    userMoviesObj["toWatch"] = updatedMovies;
+
+    userData[currentUser].movies = userMoviesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentMovies([...userMoviesObj[activeTab]]);
+  };
+
+  const handleMoveToRecentlyWatched = (movie) => {
+    if (activeTab === "toWatch") {
+      handleMarkAsWatched(movie);
+    }
+  };
+
   return (
     <>
       <Search
@@ -233,10 +265,10 @@ const Movies = () => {
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
-            className={activeTab === "favorites" ? "active" : ""}
-            onClick={() => handleTabClick("favorites")}
+            className={activeTab === "toWatch" ? "active" : ""}
+            onClick={() => handleTabClick("toWatch")}
           >
-            Favorites
+            To Watch
           </button>
           <button
             className={activeTab === "recentlyWatched" ? "active" : ""}
@@ -245,10 +277,10 @@ const Movies = () => {
             Recently Watched
           </button>
           <button
-            className={activeTab === "toWatch" ? "active" : ""}
-            onClick={() => handleTabClick("toWatch")}
+            className={activeTab === "favorites" ? "active" : ""}
+            onClick={() => handleTabClick("favorites")}
           >
-            To Watch
+            Favorites
           </button>
         </div>
 
@@ -261,6 +293,8 @@ const Movies = () => {
                 <th>Director</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
+                <th>Added Date</th>
+                <th>Watched Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -284,7 +318,17 @@ const Movies = () => {
                       initialRating={movie.userRating}
                     />
                   </td>
+                  <td>{movie.addedDate || "N/A"}</td>
+                  <td>{movie.watchedDate || "N/A"}</td>
                   <td>
+                    {activeTab === "toWatch" && (
+                      <button
+                        className="details-books-button"
+                        onClick={() => handleMoveToRecentlyWatched(movie)}
+                      >
+                        Move to Recently Watched
+                      </button>
+                    )}
                     <button
                       className="details-books-button"
                       onClick={() => handleMovieClick(movie.movieId)}
@@ -295,7 +339,6 @@ const Movies = () => {
                       className="delete-button"
                       onClick={() => handleDeleteMovie(movie)}
                     >
-                      {" "}
                       <FaTrashAlt />
                     </button>
                   </td>

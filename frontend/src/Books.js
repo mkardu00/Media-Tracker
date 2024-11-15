@@ -124,8 +124,8 @@ const Books = () => {
       avgRating: book.volumeInfo.averageRating || "N/A",
       userRating: 0,
       startDate:
-        activeTab === "reading" ? format(new Date(), "dd/MM/yyyy") : null,
-      endDate: activeTab === "read" ? format(new Date(), "dd/MM/yyyy") : null,
+        activeTab === "reading" ? format(new Date(), "yyyy-MM-dd") : null,
+      endDate: activeTab === "read" ? format(new Date(), "yyyy-MM-dd") : null,
     };
 
     if (userBooksObj[activeTab].some((b) => b.bookId === bookToAdd.bookId)) {
@@ -207,7 +207,7 @@ const Books = () => {
 
     const updatedBook = {
       ...book,
-      endDate: format(new Date(), "dd/MM/yyyy"),
+      endDate: format(new Date(), "yyyy-MM-dd"),
     };
     userBooksObj.read.push(updatedBook);
     userBooksObj.reading = userBooksObj.reading.filter(
@@ -229,7 +229,7 @@ const Books = () => {
 
     const updatedBook = {
       ...book,
-      startDate: format(new Date(), "dd/MM/yyyy"),
+      startDate: format(new Date(), "yyyy-MM-dd"),
     };
 
     userBooksObj.reading.push(updatedBook);
@@ -307,9 +307,9 @@ const Books = () => {
                 <th>Author</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
-                <th>Progress</th>
-                {activeTab === "reading" && <th>Start Date</th>}
-                {activeTab === "read" && <th>End Date</th>}
+
+                {activeTab === "reading" && <th>Date Started</th>}
+                {activeTab === "read" && <th> Date Finished </th>}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -333,27 +333,13 @@ const Books = () => {
                       initialRating={book.userRating}
                     />
                   </td>
-                  <td>
-                    <div className="progress-bar-container">
-                      <div
-                        className="progress-bar"
-                        style={{
-                          width:
-                            activeTab === "wantToRead"
-                              ? "33%"
-                              : activeTab === "reading"
-                              ? "66%"
-                              : "100%",
-                        }}
-                      ></div>
-                    </div>
-                  </td>
+
                   {activeTab === "reading" && (
                     <td>
                       {editingStartDate === book.bookId ? (
                         <input
                           type="date"
-                          value={book.startDate}
+                          value={book.startDate || ""}
                           onChange={(e) =>
                             handleDateChange(
                               book.bookId,
@@ -365,19 +351,20 @@ const Books = () => {
                         />
                       ) : (
                         <span onClick={() => setEditingStartDate(book.bookId)}>
-                          {book.startDate
+                          {book.startDate && !isNaN(Date.parse(book.startDate))
                             ? format(new Date(book.startDate), "dd/MM/yyyy")
                             : "N/A"}
                         </span>
                       )}
                     </td>
                   )}
+
                   {activeTab === "read" && (
                     <td>
                       {editingEndDate === book.bookId ? (
                         <input
                           type="date"
-                          value={book.endDate}
+                          value={book.endDate || ""}
                           onChange={(e) =>
                             handleDateChange(
                               book.bookId,
@@ -389,7 +376,7 @@ const Books = () => {
                         />
                       ) : (
                         <span onClick={() => setEditingEndDate(book.bookId)}>
-                          {book.endDate
+                          {book.endDate && !isNaN(Date.parse(book.endDate))
                             ? format(new Date(book.endDate), "dd/MM/yyyy")
                             : "N/A"}
                         </span>

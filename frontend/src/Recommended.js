@@ -34,7 +34,7 @@ const Recommended = ({ recommendedMedia, mediaType, handleAddMedia }) => {
                 key={index}
                 image={volumeInfo.imageLinks.smallThumbnail}
                 title={volumeInfo.title}
-                author={volumeInfo.authors.join(", ")}
+                author={volumeInfo.authors?.join(", ")}
                 onDetailsClick={() => handleMediaClick(id)}
                 onAddClick={() => handleAddMedia(media)}
               />
