@@ -24,6 +24,8 @@ const Movies = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [currentMovies, setCurrentMovies] = useState(userMoviesObj[activeTab]);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
+  const [editingStartDate, setEditingStartDate] = useState(null);
+  const [editingEndDate, setEditingEndDate] = useState(null);
   const [genreFilter, setGenreFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState(0);
 
@@ -222,6 +224,25 @@ const Movies = () => {
     }
   };
 
+  const handleDateChange = (movieId, dateType, newDate) => {
+    const updatedMovies = currentMovies.map((movie) =>
+      movie.movieId === movieId ? { ...movie, [dateType]: newDate } : movie
+    );
+
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userMoviesObj = userData[currentUser]?.movies || {
+      favorites: [],
+      recentlyWatched: [],
+      toWatch: [],
+    };
+
+    userMoviesObj[activeTab] = updatedMovies;
+    userData[currentUser].movies = userMoviesObj;
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    setCurrentMovies(updatedMovies);
+  };
+
   return (
     <>
       <Search
@@ -237,7 +258,7 @@ const Movies = () => {
         mediaType="movie"
       />
 
-      <div className="filter-container">
+      <div className="profile-field">
         <select
           onChange={(e) => setGenreFilter(e.target.value)}
           value={genreFilter}
@@ -293,8 +314,10 @@ const Movies = () => {
                 <th>Director</th>
                 <th>Average Rating</th>
                 <th>Your Rating</th>
-                <th>Added Date</th>
-                <th>Watched Date</th>
+
+                {activeTab === "toWatch" && <th>Added Date </th>}
+                {activeTab === "recentlyWatched" && <th>Watched Date</th>}
+
                 <th>Actions</th>
               </tr>
             </thead>
@@ -318,8 +341,59 @@ const Movies = () => {
                       initialRating={movie.userRating}
                     />
                   </td>
-                  <td>{movie.addedDate || "N/A"}</td>
-                  <td>{movie.watchedDate || "N/A"}</td>
+
+                  {activeTab === "toWatch" && (
+                    <td>
+                      {editingStartDate === movie.movieId ? (
+                        <input
+                          type="date"
+                          value={movie.addedDate || ""}
+                          onChange={(e) =>
+                            handleDateChange(
+                              movie.movieId,
+                              "addedDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingStartDate(null)}
+                        />
+                      ) : (
+                        <span
+                          onClick={() => setEditingStartDate(movie.movieId)}
+                        >
+                          {movie.addedDate &&
+                          !isNaN(new Date(movie.addedDate).getTime())
+                            ? format(new Date(movie.addedDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
+                    </td>
+                  )}
+                  {activeTab === "recentlyWatched" && (
+                    <td>
+                      {editingEndDate === movie.movieId ? (
+                        <input
+                          type="date"
+                          value={movie.watchedDate || ""}
+                          onChange={(e) =>
+                            handleDateChange(
+                              movie.movieId,
+                              "watchedDate",
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => setEditingEndDate(null)}
+                        />
+                      ) : (
+                        <span onClick={() => setEditingEndDate(movie.movieId)}>
+                          {movie.watchedDate &&
+                          !isNaN(new Date(movie.watchedDate).getTime())
+                            ? format(new Date(movie.watchedDate), "dd/MM/yyyy")
+                            : "N/A"}
+                        </span>
+                      )}
+                    </td>
+                  )}
                   <td>
                     {activeTab === "toWatch" && (
                       <button
