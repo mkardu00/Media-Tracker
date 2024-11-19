@@ -1,233 +1,124 @@
-.profile-page {
+.profile-page-modern {
+  max-width: 800px;
+  margin: auto;
   padding: 20px;
-  max-width: 700px;
-  margin: 0 auto;
-  background-color: #ffffff;
+  background-color: #f9fafc;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-.profile-page h1 {
-  font-size: 2.2rem;
-  margin-bottom: 25px;
-  color: #073750;
+.profile-card {
   text-align: center;
-  font-weight: 600;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
-.user-info-section {
-  display: grid;
-  grid-gap: 20px;
+.profile-header {
+  margin-bottom: 20px;
 }
 
-.profile-field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
+.profile-image {
+  position: relative;
+  margin: auto;
+  width: 120px;
+  height: 120px;
 }
 
-.profile-field label {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #073750;
-  margin-bottom: 8px;
-}
-
-.profile-field input,
-.profile-field select,
-.profile-field span,
-.profile-field p {
-  padding: 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #073750;
-  background-color: #f5f8fa;
-  transition: background-color 0.3s;
-}
-
-.profile-field input:focus,
-.profile-field select:focus {
-  background-color: #ffffff;
-  border-color: #25c29a;
-  outline: none;
-}
-
-.profile-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.profile-buttons button {
-  background-color: #25c29a;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.profile-buttons button:hover {
-  background-color: #1abc9c;
-  transform: scale(1.05);
-}
-
-.profile-buttons button:focus {
-  outline: none;
-}
-
-.profile-field span,
-.profile-field p {
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  font-size: 1rem;
-  color: #073750;
-}
-
-.books-table {
+.profile-image img {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 25px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.books-table th,
-.books-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.books-table th {
-  background-color: #25c29a;
-  color: #ffffff;
-  font-weight: 600;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.books-table tr:hover {
-  background-color: #f5f8fa;
-  cursor: pointer;
-}
-
-.book-cover {
-  width: 60px;
-  height: auto;
-  border-radius: 8px;
+  height: 100%;
+  border-radius: 50%;
   object-fit: cover;
 }
 
-.action-buttons button,
-.details-books-button,
-.delete-button {
-  display: inline-flex;
+.upload-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #25c29a;
-  color: #ffffff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 20px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s, transform 0.2s;
 }
 
-.action-buttons button:hover,
-.details-books-button:hover,
-.delete-button:hover {
-  background-color: #1abc9c;
-  transform: scale(1.05);
+.profile-details {
+  text-align: left;
 }
 
-.delete-button {
-  background-color: #e74c3c;
+.profile-field {
+  margin: 10px 0;
 }
 
-.delete-button:hover {
-  background-color: #c0392b;
+.profile-field label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
 }
 
-.progress-bar-container {
-  width: 100%;
-  background-color: #f0f3f5;
-  border-radius: 10px;
-  overflow: hidden;
-  height: 10px;
-  margin-top: 5px;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: #3498db;
-  transition: width 0.3s ease;
-}
-
-input,
-select {
-  font-size: 1rem;
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #d0d7de;
+.profile-field input,
+.profile-field select {
+  width: 98%;
+  padding: 10px;
   border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #25c29a;
+.profile-actions {
+  margin-top: 20px;
 }
 
-@media (max-width: 768px) {
-  .profile-page {
-    padding: 10px;
-    margin: 0 10px;
-  }
+.profile-actions button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-  .profile-field {
-    margin-bottom: 15px;
-  }
+.edit-button {
+  background-color: #25c29a;
+  color: white;
+}
 
-  .profile-buttons button {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-  }
+.save-button {
+  background-color: #25c29a;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.save-button:hover,
+.cancel-button:hover {
+  opacity: 0.9;
+}
+
+.user-info a span {
+  position: relative;
+  top: -8px;
 }
 
 .change-password-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #3498db;
+  background-color: #e74c3c;
   color: white;
   border: none;
-  padding: 10px 18px;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .change-password-button:hover {
-  background-color: #2980b9;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-}
-
-.change-password-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
-}
-
-.lock-icon {
-  margin-right: 8px;
+  background-color: #0056b3;
+  transform: scale(1.05);
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileImg from "./assets/profile.png";
 import logoImg from "./assets/logo.png";
@@ -11,6 +11,8 @@ const NavBar = () => {
   const isHomePage = location && location.pathname === "/";
   const currentUser = localStorage.getItem("currentUser");
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
+
+  const profileImage = userData[currentUser].profileImage;
 
   const handleSignOut = () => {
     localStorage.removeItem("currentUser");
@@ -66,9 +68,13 @@ const NavBar = () => {
                   to="/profile"
                   className={location.pathname === "/profile" ? "active" : ""}
                 >
-                  <FaUser className="user-avatar" />
+                  <img
+                    src={profileImage || profileImg}
+                    alt="User Avatar"
+                    className="user-avatar"
+                  />
                   <span className="greeting">
-                    {userData[currentUser]?.name.toUpperCase()}
+                    {userData[currentUser]?.name?.toUpperCase() || "User"}
                   </span>
                 </Link>
               </div>

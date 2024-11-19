@@ -1,56 +1,55 @@
-
-body, html {
+body,
+html {
   height: 100%;
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  color: black; 
+  font-family: "Arial", sans-serif;
+  color: black;
 }
 
 .home-container {
-  background-image: url('./assets/logo.png');
-  height: 100vh; 
+  background-image: url("./assets/logo.png");
+  height: 100vh;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; 
-  overflow: hidden; 
+  position: relative;
+  overflow: hidden;
 }
 
-
 .home-container::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
 .content {
   text-align: center;
-  z-index: 2; 
-  padding: 20px; 
-  border-radius: 15px; 
-  backdrop-filter: blur(5px); 
+  z-index: 2;
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
 }
 
 h1 {
-  font-size: 3.5rem; 
+  font-size: 3.5rem;
   margin-bottom: 20px;
-  animation: fadeIn 1s; 
-  color: #f6f9e3;
+  animation: fadeIn 1s;
+  color: black;
 }
 
 p {
-  font-size: 1.3rem; 
+  font-size: 1.3rem;
   margin-bottom: 30px;
-  animation: fadeIn 1.2s; 
-  color: #f6f9e3;
+  animation: fadeIn 1.2s;
+  color: black;
 }
 
 .buttons {
@@ -65,8 +64,8 @@ p {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .signup-btn {
@@ -76,7 +75,7 @@ p {
 
 .signup-btn:hover {
   background-color: #128d6e;
-  transform: translateY(-2px); 
+  transform: translateY(-2px);
 }
 
 .signin-btn {
@@ -86,63 +85,61 @@ p {
 
 .signin-btn:hover {
   background-color: #28a1a3;
-  transform: translateY(-2px); 
+  transform: translateY(-2px);
 }
-
 
 @keyframes fadeIn {
   from {
-      opacity: 0;
-      transform: translateY(-20px);
+    opacity: 0;
+    transform: translateY(-20px);
   }
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-
 .ReactModal__Overlay {
-  background: rgba(0, 0, 0, 0.75); 
-  z-index: 999; 
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 999;
 }
 
 .ReactModal__Content {
   width: 90%;
-  max-width: 500px; 
-  max-height: 500px; 
+  max-width: 500px;
+  max-height: 500px;
   margin: auto;
   padding: 20px;
-  border-radius: 10px; 
-  background: #fff; 
-  color: #333; 
-  animation: slideIn 0.3s ease-in-out; 
-  position: relative; 
-  z-index: 1000; 
+  border-radius: 10px;
+  background: #fff;
+  color: #333;
+  animation: slideIn 0.3s ease-in-out;
+  position: relative;
+  z-index: 1000;
 }
 
 @keyframes slideIn {
   from {
-      transform: translateY(-50px);
-      opacity: 0;
+    transform: translateY(-50px);
+    opacity: 0;
   }
   to {
-      transform: translateY(0);
-      opacity: 1;
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
 label {
   display: block;
-  margin: 10px 0 5px; 
+  margin: 10px 0 5px;
 }
 
 input {
   width: 80%;
   padding: 10px;
-  border: 1px solid #ccc; 
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 button[type="submit"] {
@@ -153,7 +150,7 @@ button[type="submit"] {
   border-radius: 5px;
   cursor: pointer;
   margin: 5px;
-  transition: background-color 0.3s; 
+  transition: background-color 0.3s;
 }
 
 button[type="submit"]:hover {
@@ -168,9 +165,9 @@ button[type="close"] {
   border-radius: 5px;
   cursor: pointer;
   margin: 5px;
-  transition: background-color 0.3s; 
+  transition: background-color 0.3s;
 }
 
 button[type="close"]:hover {
-  background-color: rgb(224, 212, 212); 
+  background-color: rgb(224, 212, 212);
 }

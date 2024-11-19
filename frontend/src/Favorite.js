@@ -6,7 +6,6 @@ const FavoriteBooks = () => {
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
 
   const favoriteBooks = userData[currentUser].favorites;
-  console.log("Favirurw", favoriteBooks);
 
   return (
     <div className="favorite-books-section">
