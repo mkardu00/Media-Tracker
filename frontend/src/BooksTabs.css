@@ -3,6 +3,8 @@
   border-collapse: separate;
   border-spacing: 0;
   margin-top: 20px;
+  padding-left: 1.2%;
+  padding-right: 1.2%;
 }
 
 .books-table th,
@@ -100,11 +102,10 @@
   transition: width 0.3s ease;
 }
 
-tab-navigation {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+.tab-navigation {
+  width: 98%;
   margin-bottom: 20px;
+  padding-left: 1.7%;
 }
 
 .tab-navigation button {

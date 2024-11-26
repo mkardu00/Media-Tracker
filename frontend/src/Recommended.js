@@ -32,7 +32,7 @@ const Recommended = ({ recommendedMedia, mediaType, handleAddMedia }) => {
             return (
               <Card
                 key={index}
-                image={volumeInfo.imageLinks.smallThumbnail}
+                image={volumeInfo.imageLinks.thumbnail}
                 title={volumeInfo.title}
                 author={volumeInfo.authors?.join(", ")}
                 onDetailsClick={() => handleMediaClick(id)}
