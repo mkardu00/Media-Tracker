@@ -4,7 +4,7 @@ import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
 import StarRating from "./StarRating";
-import Search from "./Search";
+
 import { FaEye, FaTrashAlt } from "react-icons/fa";
 import { format } from "date-fns";
 import NavBar from "./NavBar";

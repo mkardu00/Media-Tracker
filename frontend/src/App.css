@@ -8,6 +8,7 @@ html {
 .App {
   width: 100vw;
   overflow-x: hidden;
+  background-color: rgba(217, 234, 229, 0.9);
 }
 
 .App-logo {

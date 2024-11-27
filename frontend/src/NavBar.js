@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileImg from "./assets/profile.png";
 import logoImg from "./assets/logo.png";
-import { FaBook, FaGamepad, FaFilm, FaUser } from "react-icons/fa";
+import {
+  FaBook,
+  FaGamepad,
+  FaFilm,
+  FaUser,
+  FaEye,
+  FaTrashAlt,
+} from "react-icons/fa";
 import "./NavBar.css";
-
-import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 const NavBar = ({
   searchQuery,
@@ -24,12 +29,17 @@ const NavBar = ({
   const isHomePage = location && location.pathname === "/";
   const currentUser = localStorage.getItem("currentUser");
   let userData = JSON.parse(localStorage.getItem("userData")) || {};
+  const [showSearchModal, setShowSearchModal] = useState(false); // State za modal
 
-  const profileImage = userData[currentUser].profileImage;
+  const profileImage = userData[currentUser]?.profileImage;
 
   const handleSignOut = () => {
     localStorage.removeItem("currentUser");
     navigate("/");
+  };
+  const handleCloseModal = () => {
+    setSearchQuery("");
+    setShowSearchModal(false);
   };
 
   return (
@@ -81,42 +91,15 @@ const NavBar = ({
               onKeyDown={(e) => e.key === "Enter" && handleKeyPress(e)}
               placeholder={`Search for a ${mediaType}...`}
             />
-            <button onClick={handleSearch}>Search</button>
+            <button
+              onClick={() => {
+                handleSearch();
+                setShowSearchModal(true);
+              }}
+            >
+              Search
+            </button>
             <button onClick={handleClearSearchResults}>Clear</button>
-            <ul>
-              {searchResults?.map((item, index) => (
-                <li key={index}>
-                  {mediaType === "book"
-                    ? "📚 "
-                    : mediaType === "movie"
-                    ? "🎬 "
-                    : mediaType === "game"
-                    ? "🎮 "
-                    : ""}
-                  {item.volumeInfo?.title || item.Title || item.name}
-
-                  <div className="book-buttons">
-                    <button onClick={() => handleAddMediaFromSearch(item)}>
-                      Add to {activeTab}
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleMediaClick(item.id || item.imdbID || item.gameId)
-                      }
-                    >
-                      <FaEye />
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleMediaClick(item.id || item.imdbID || item.gameId)
-                      }
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {currentUser && (
@@ -142,6 +125,42 @@ const NavBar = ({
             </div>
           )}
         </nav>
+      )}
+
+      {showSearchModal && (
+        <div className="overlay" onClick={handleCloseModal}>
+          <div className="search-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Search Results</h2>
+            <ul>
+              {searchResults?.map((item, index) => (
+                <li key={index}>
+                  {mediaType === "book"
+                    ? "📚 "
+                    : mediaType === "movie"
+                    ? "🎬 "
+                    : mediaType === "game"
+                    ? "🎮 "
+                    : ""}
+                  {item.volumeInfo?.title || item.Title || item.name}
+
+                  <div className="book-buttons">
+                    <button onClick={() => handleAddMediaFromSearch(item)}>
+                      Add to {activeTab}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleMediaClick(item.id || item.imdbID || item.gameId)
+                      }
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <button onClick={handleCloseModal}>Close</button>
+          </div>
+        </div>
       )}
     </div>
   );
