@@ -3,10 +3,11 @@ import axios from "axios";
 import "./BooksTabs.css";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
-import Search from "./Search";
+
 import StarRating from "./StarRating";
 import { FaEye, FaTrashAlt, FaCheckCircle, FaHeart } from "react-icons/fa";
 import { format } from "date-fns";
+import NavBar from "./NavBar";
 
 const Books = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -263,7 +264,7 @@ const Books = () => {
 
   return (
     <>
-      <Search
+      <NavBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearchBooks}

@@ -7,6 +7,7 @@ import StarRating from "./StarRating";
 import Search from "./Search";
 import { FaEye, FaTrashAlt } from "react-icons/fa";
 import { format } from "date-fns";
+import NavBar from "./NavBar";
 
 const Movies = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -245,7 +246,7 @@ const Movies = () => {
 
   return (
     <>
-      <Search
+      <NavBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearchMovies}
@@ -256,7 +257,7 @@ const Movies = () => {
         activeTab={activeTab}
         handleKeyPress={handleKeyPress}
         mediaType="movie"
-      />
+      ></NavBar>
 
       <div className="profile-field">
         <select

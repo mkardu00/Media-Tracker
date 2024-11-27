@@ -5,7 +5,20 @@ import logoImg from "./assets/logo.png";
 import { FaBook, FaGamepad, FaFilm, FaUser } from "react-icons/fa";
 import "./NavBar.css";
 
-const NavBar = () => {
+import { FaEye, FaTrashAlt } from "react-icons/fa";
+
+const NavBar = ({
+  searchQuery,
+  setSearchQuery,
+  handleSearch,
+  handleClearSearchResults,
+  searchResults,
+  handleAddMediaFromSearch,
+  handleMediaClick,
+  activeTab,
+  handleKeyPress,
+  mediaType,
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location && location.pathname === "/";
@@ -58,6 +71,51 @@ const NavBar = () => {
                   <FaFilm className="nav-icon" /> Movies & TV Shows
                 </Link>
               </li>
+            </ul>
+          </div>
+          <div className="book-search">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleKeyPress(e)}
+              placeholder={`Search for a ${mediaType}...`}
+            />
+            <button onClick={handleSearch}>Search</button>
+            <button onClick={handleClearSearchResults}>Clear</button>
+            <ul>
+              {searchResults?.map((item, index) => (
+                <li key={index}>
+                  {mediaType === "book"
+                    ? "📚 "
+                    : mediaType === "movie"
+                    ? "🎬 "
+                    : mediaType === "game"
+                    ? "🎮 "
+                    : ""}
+                  {item.volumeInfo?.title || item.Title || item.name}
+
+                  <div className="book-buttons">
+                    <button onClick={() => handleAddMediaFromSearch(item)}>
+                      Add to {activeTab}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleMediaClick(item.id || item.imdbID || item.gameId)
+                      }
+                    >
+                      <FaEye />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleMediaClick(item.id || item.imdbID || item.gameId)
+                      }
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
 

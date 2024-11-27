@@ -7,6 +7,7 @@ import StarRating from "./StarRating";
 import Search from "./Search";
 import { FaEye, FaTrashAlt, FaCheckCircle, FaHeart } from "react-icons/fa";
 import { format } from "date-fns";
+import NavBar from "./NavBar";
 
 const VideoGames = () => {
   const currentUser = localStorage.getItem("currentUser");
@@ -283,7 +284,7 @@ const VideoGames = () => {
 
   return (
     <>
-      <Search
+      <NavBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearchGames}
@@ -294,7 +295,7 @@ const VideoGames = () => {
         activeTab={activeTab}
         handleKeyPress={handleKeyPress}
         mediaType="game"
-      />
+      ></NavBar>
 
       <div className="tabs-container">
         <div className="tab-navigation">
