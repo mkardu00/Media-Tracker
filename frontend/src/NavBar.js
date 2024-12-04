@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import profileImg from "./assets/profile.png";
 import logoImg from "./assets/logo.png";
-import {
-  FaBook,
-  FaGamepad,
-  FaFilm,
-  FaUser,
-  FaEye,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { FaBook, FaGamepad, FaFilm } from "react-icons/fa";
 import "./NavBar.css";
 
 const NavBar = ({
@@ -27,16 +21,32 @@ const NavBar = ({
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location && location.pathname === "/";
-  const currentUser = localStorage.getItem("currentUser");
-  let userData = JSON.parse(localStorage.getItem("userData")) || {};
+  const [user, setUser] = useState(null);
   const [showSearchModal, setShowSearchModal] = useState(false); // State za modal
+  const token = localStorage.getItem("token");
 
-  const profileImage = userData[currentUser]?.profileImage;
+  // Funkcija za dohvat podataka o korisniku
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleSignOut = () => {
-    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
     navigate("/");
   };
+
   const handleCloseModal = () => {
     setSearchQuery("");
     setShowSearchModal(false);
@@ -102,7 +112,7 @@ const NavBar = ({
             <button onClick={handleClearSearchResults}>Clear</button>
           </div>
 
-          {currentUser && (
+          {user && (
             <div className="nav-right">
               <div className="user-info">
                 <Link
@@ -110,13 +120,11 @@ const NavBar = ({
                   className={location.pathname === "/profile" ? "active" : ""}
                 >
                   <img
-                    src={profileImage || profileImg}
+                    src={user.profileImage || profileImg}
                     alt="User Avatar"
                     className="user-avatar"
                   />
-                  <span className="greeting">
-                    {userData[currentUser]?.name?.toUpperCase() || "User"}
-                  </span>
+                  <span className="greeting">{user.name.toUpperCase()}</span>
                 </Link>
               </div>
               <button onClick={handleSignOut} className="sign-out-button">
@@ -152,7 +160,7 @@ const NavBar = ({
                         handleMediaClick(item.id || item.imdbID || item.gameId)
                       }
                     >
-                      <FaEye />
+                      View
                     </button>
                   </div>
                 </li>

@@ -36,18 +36,16 @@ const HomePage = () => {
     setSignUpOpen(false);
   };
 
-  const currentUser = localStorage.getItem("currentUser");
-
   const navigate = useNavigate();
 
-  function isPasswordValid() {
+  const isPasswordValid = () => {
     let isValid = true;
     if (password.length < 9) {
       isValid = false;
-      setError("Password is to short");
+      setError("Password is too short");
     } else if (password.length > 20) {
       isValid = false;
-      setError("Password is to long");
+      setError("Password is too long");
     } else if (password.search(/\d/) === -1) {
       isValid = false;
       setError("Password must contain at least one number");
@@ -56,43 +54,48 @@ const HomePage = () => {
       setError("Password must contain at least one uppercase letter");
     } else if (password.search(/[a-z]/) === -1) {
       isValid = false;
-      setError("Password must contain at least one lower letter");
+      setError("Password must contain at least one lowercase letter");
     } else if (password.search(/[!@#$%^&*]/) === -1) {
       isValid = false;
       setError(
-        "Password must contain at least one special characters like !@#$%^&*"
+        "Password must contain at least one special character like !@#$%^&*"
       );
     }
     return isValid;
-  }
-
-  const handleSignIn = (e) => {
-    e.preventDefault();
-    setError("");
-    if (!email || !password) {
-      return setError("Please enter email and password");
-    } else {
-      setError("");
-      let userData = localStorage.getItem("userData");
-
-      if (!userData) {
-        return setError("User does not exist");
-      } else {
-        let userDataObj = JSON.parse(userData);
-        if (!userData || !userDataObj[email]) {
-          return setError("Incorrect email");
-        } else if (userDataObj[email]["password"] !== password) {
-          return setError("Incorrect password");
-        }
-      }
-      localStorage.setItem("currentUser", email);
-      setSigneinSuccessful(true);
-    }
   };
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
+  const signupUser = async (name, email, password) => {
+    const response = await fetch("http://localhost:5000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+
+    return response.json();
+  };
+
+  const signinUser = async (email, password) => {
+    const response = await fetch("http://localhost:5000/api/auth/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+
+    return response.json();
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
     setError("");
 
     if (!email || !password || !passwordConfirm) {
@@ -104,46 +107,44 @@ const HomePage = () => {
       return;
     }
 
-    setError("");
-    let userData = localStorage.getItem("userData");
-
-    if (!userData) {
-      userData = {};
-      userData[email] = {
-        name: name,
-        password: password,
-        books: { wantToRead: [], reading: [], read: [] },
-        movies: { favorites: [], recentlyWatched: [], toWatch: [] },
-        videoGames: { wantToPlay: [], playing: [], played: [] },
-      };
-      localStorage.setItem("userData", JSON.stringify(userData));
-    } else {
-      let userDataObj = JSON.parse(userData);
-      if (userDataObj[email]) {
-        return setError("Email already in use");
-      }
-      userDataObj[email] = {
-        name: name,
-        password: password,
-        books: { wantToRead: [], reading: [], read: [] },
-        movies: { favorites: [], recentlyWatched: [], toWatch: [] },
-        videoGames: { wantToPlay: [], playing: [], played: [] },
-      };
-      localStorage.setItem("userData", JSON.stringify(userDataObj));
+    try {
+      await signupUser(name, email, password);
+      setSignupSuccessful(true);
+      navigate("/books");
+    } catch (err) {
+      setError(err.message);
     }
-
-    setSignupSuccessful(true);
-    localStorage.setItem("currentUser", email);
   };
 
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      return setError("Please enter email and password");
+    }
+
+    try {
+      const data = await signinUser(email, password);
+      localStorage.setItem("token", data.token);
+      setSigneinSuccessful(true);
+      navigate("/books");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/books");
+    }
+  }, []);
   return (
     <div className="home-container">
-      {useEffect(() => {
-        currentUser && navigate("/books");
-      })}
       <div className="content " style={{ color: "white" }}>
         <h1>Welcome to Media Tracker</h1>
-        <p color>
+        <p>
           Your journey starts here. Discover books, movies, tv shows and video
           games.
         </p>
@@ -156,6 +157,7 @@ const HomePage = () => {
           </button>
         </div>
       </div>
+
       {/* Sign In Modal */}
       <Modal
         isOpen={isSignInOpen}
@@ -171,34 +173,27 @@ const HomePage = () => {
         }}
       >
         <h2>Sign In</h2>
-        {error && <p>{error}</p>}
         <form onSubmit={handleSignIn}>
           <div>
-            <label>Email: </label>
             <input
               type="email"
-              placeholder="Enter email"
+              placeholder="Email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label>Password: </label>
             <input
               type="password"
-              placeholder="Enter password"
+              placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="modal-button-container">
-            <button type="submit">Submit</button>
-            <button type="close" onClick={closeSignInModal}>
-              Close
-            </button>
-            {useEffect(() => {
-              signeinSuccessful && navigate("/books");
-            })}
-          </div>
+          <button type="submit">Sign In</button>
         </form>
+        {error && <div>{error}</div>}
+        <button onClick={closeSignInModal}>Close</button>
       </Modal>
 
       {/* Sign Up Modal */}
@@ -217,51 +212,42 @@ const HomePage = () => {
       >
         <h2>Sign Up</h2>
         <form onSubmit={handleSignUp}>
-          {error && <p>{error}</p>}
           <div>
-            <label>Name: </label>
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Name"
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
-            <label>Email: </label>
             <input
               type="email"
-              placeholder="Enter email"
+              placeholder="Email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label>Password: </label>
             <input
               type="password"
+              placeholder="Password"
               value={password}
-              placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div>
-            <label>Password confirm: </label>
             <input
               type="password"
+              placeholder="Confirm Password"
               value={passwordConfirm}
-              placeholder="Enter password"
               onChange={(e) => setPasswordConfirm(e.target.value)}
             />
           </div>
-          <div className="modal-button-container">
-            <button type="submit">Submit</button>
-            <button type="close" onClick={closeSignUpModal}>
-              Close
-            </button>
-            {useEffect(() => {
-              signupSuccessful && navigate("/books");
-            })}
-          </div>
+          <button type="submit">Sign Up</button>
         </form>
+        {error && <div>{error}</div>}
+        <button onClick={closeSignUpModal}>Close</button>
       </Modal>
     </div>
   );

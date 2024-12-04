@@ -1,299 +1,158 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./BooksTabs.css";
+import NavBar from "./NavBar";
 import MediaDetails from "./MediaDetails";
 import Recommended from "./Recommended";
-
 import StarRating from "./StarRating";
 import { FaEye, FaTrashAlt, FaCheckCircle, FaHeart } from "react-icons/fa";
 import { format } from "date-fns";
-import NavBar from "./NavBar";
+import { useNavigate } from "react-router-dom";
 
 const Books = () => {
-  const currentUser = localStorage.getItem("currentUser");
-  let userData = JSON.parse(localStorage.getItem("userData")) || {};
-
-  const userBooksObj = userData[currentUser]?.books || {
-    wantToRead: [],
-    reading: [],
-    read: [],
-  };
-
+  const [currentBooks, setCurrentBooks] = useState([]);
   const [activeTab, setActiveTab] = useState("wantToRead");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedBookId, setSelectedBookId] = useState(null);
-  const [currentBooks, setCurrentBooks] = useState(userBooksObj[activeTab]);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
-  const [editingStartDate, setEditingStartDate] = useState(null);
-  const [editingEndDate, setEditingEndDate] = useState(null);
-  const [favorites, setFavorites] = useState(
-    userData[currentUser]?.favorites || []
-  );
+  const [favorites, setFavorites] = useState([]);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  // Fetching token from localStorage
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
-    setCurrentBooks(userBooksObj[activeTab]);
-    fetchRecommendedBooks(userBooksObj[activeTab]);
-  }, [activeTab, currentUser]);
-
-  const handleSearchBooks = async () => {
-    if (searchQuery.trim() !== "") {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/api/booksearch?query=${searchQuery}`
-        );
-        setSearchResults(response.data.items || []);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      }
-    }
-  };
-
-  const toggleFavorite = (book) => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const currentFavorites = userData[currentUser]?.favorites || [];
-
-    let updatedFavorites;
-    if (currentFavorites.some((favBook) => favBook.bookId === book.bookId)) {
-      updatedFavorites = currentFavorites.filter(
-        (favBook) => favBook.bookId !== book.bookId
-      );
-    } else {
-      updatedFavorites = [...currentFavorites, book];
-    }
-
-    userData[currentUser] = {
-      ...userData[currentUser],
-      favorites: updatedFavorites,
-    };
-    localStorage.setItem("userData", JSON.stringify(userData));
-    setFavorites(updatedFavorites);
-  };
-
-  const fetchRecommendedBooks = async (books) => {
-    if (books.length > 0) {
-      const firstBook = books[0];
-      const author = firstBook.author;
-
-      if (author) {
-        try {
-          const response = await axios.get(
-            `${BASE_URL}/api/recommendedbooks?author=${author}`
-          );
-
-          const filteredBooks =
-            response.data.items?.filter(
-              (book) => book.volumeInfo.averageRating >= 4
-            ) || [];
-
-          setRecommendedBooks(filteredBooks);
-        } catch (error) {
-          console.error("Error fetching recommended books:", error);
-          setRecommendedBooks([]);
-        }
-      } else {
-        setRecommendedBooks([]);
-      }
-    } else {
-      setRecommendedBooks([]);
-    }
-  };
-  const handleTabClick = (tabName) => {
-    setActiveTab(tabName);
-  };
-
-  const handleAddBookFromSearch = (book) => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
-
-    const bookToAdd = {
-      title: book.volumeInfo.title,
-      bookId: book.id,
-      author: book.volumeInfo.authors?.[0] || "Unknown",
-      cover: book.volumeInfo.imageLinks?.thumbnail,
-      avgRating: book.volumeInfo.averageRating || "N/A",
-      userRating: 0,
-      startDate:
-        activeTab === "reading" ? format(new Date(), "yyyy-MM-dd") : null,
-      endDate: activeTab === "read" ? format(new Date(), "yyyy-MM-dd") : null,
-    };
-
-    if (userBooksObj[activeTab].some((b) => b.bookId === bookToAdd.bookId)) {
-      alert("Book already exists in your list.");
+    // Redirect to login if no token
+    if (!token) {
+      navigate("/");
       return;
     }
 
-    userBooksObj[activeTab].push(bookToAdd);
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
-    setSearchQuery("");
-    setSearchResults([]);
-    setCurrentBooks([...userBooksObj[activeTab]]);
-  };
-
-  const handleDeleteBook = (book) => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
+    // Fetch books for the authenticated user
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/books`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setCurrentBooks(response.data.books || []);
+        setFavorites(response.data.favorites || []);
+      } catch (err) {
+        setError("Failed to fetch books. Please try again.");
+      }
     };
 
-    const updatedBooks = userBooksObj[activeTab].filter(
-      (b) => b.bookId !== book.bookId
-    );
-    userBooksObj[activeTab] = updatedBooks;
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
+    fetchBooks();
+  }, [token, navigate]);
 
-    setCurrentBooks([...updatedBooks]);
-  };
+  const handleSearchBooks = async () => {
+    if (searchQuery.trim() === "") return;
 
-  const handleBookClick = (bookId) => {
-    setSelectedBookId(bookId);
-  };
-
-  const handleCloseDetails = () => {
-    setSelectedBookId(null);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSearchBooks();
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/booksearch?query=${searchQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSearchResults(response.data.items || []);
+    } catch (err) {
+      setError("Error searching for books. Please try again.");
     }
   };
 
-  const handleClearSearchResults = () => {
-    setSearchResults([]);
-    setSearchQuery("");
+  const handleAddBookFromSearch = async (book) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/books`,
+        { book, status: activeTab },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCurrentBooks([...currentBooks, response.data.book]);
+      setSearchResults([]);
+    } catch (err) {
+      setError("Error adding book. Please try again.");
+    }
   };
 
-  const handleUserRatingChange = (bookId, rating) => {
-    const updatedBooks = currentBooks.map((book) =>
-      book.bookId === bookId ? { ...book, userRating: rating } : book
-    );
+  const handleDeleteBook = async (bookId) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/books/${bookId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
-
-    userBooksObj[activeTab] = updatedBooks;
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
-
-    setCurrentBooks(updatedBooks);
+      setCurrentBooks(currentBooks.filter((book) => book.id !== bookId));
+    } catch (err) {
+      setError("Error deleting book. Please try again.");
+    }
   };
 
-  const handleMarkAsRead = (book) => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
+  const handleFavoriteToggle = async (book) => {
+    try {
+      const updatedFavorites = favorites.includes(book.id)
+        ? favorites.filter((id) => id !== book.id)
+        : [...favorites, book.id];
 
-    const updatedBook = {
-      ...book,
-      endDate: format(new Date(), "yyyy-MM-dd"),
-    };
-    userBooksObj.read.push(updatedBook);
-    userBooksObj.reading = userBooksObj.reading.filter(
-      (b) => b.bookId !== book.bookId
-    );
+      await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/favorites`,
+        { favorites: updatedFavorites },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
-    setCurrentBooks([...userBooksObj[activeTab]]);
-  };
-
-  const handleMoveToReading = (book) => {
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
-
-    const updatedBook = {
-      ...book,
-      startDate: format(new Date(), "yyyy-MM-dd"),
-    };
-
-    userBooksObj.reading.push(updatedBook);
-    userBooksObj.wantToRead = userBooksObj.wantToRead.filter(
-      (b) => b.bookId !== book.bookId
-    );
-
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
-    setCurrentBooks([...userBooksObj[activeTab]]);
-  };
-
-  const handleDateChange = (bookId, dateType, newDate) => {
-    const updatedBooks = currentBooks.map((book) =>
-      book.bookId === bookId ? { ...book, [dateType]: newDate } : book
-    );
-
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
-    const userBooksObj = userData[currentUser]?.books || {
-      wantToRead: [],
-      reading: [],
-      read: [],
-    };
-
-    userBooksObj[activeTab] = updatedBooks;
-    userData[currentUser].books = userBooksObj;
-    localStorage.setItem("userData", JSON.stringify(userData));
-
-    setCurrentBooks(updatedBooks);
+      setFavorites(updatedFavorites);
+    } catch (err) {
+      setError("Error updating favorites. Please try again.");
+    }
   };
 
   return (
-    <>
+    <div>
       <NavBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearchBooks}
-        handleClearSearchResults={handleClearSearchResults}
-        searchResults={searchResults}
-        handleAddMediaFromSearch={handleAddBookFromSearch}
-        handleMediaClick={handleBookClick}
-        activeTab={activeTab}
-        handleKeyPress={handleKeyPress}
-        mediaType="book"
       />
+
+      {error && <div className="error">{error}</div>}
 
       <div className="tabs-container">
         <div className="tab-navigation">
           <button
             className={activeTab === "wantToRead" ? "active" : ""}
-            onClick={() => handleTabClick("wantToRead")}
+            onClick={() => setActiveTab("wantToRead")}
           >
             Want to Read
           </button>
           <button
             className={activeTab === "reading" ? "active" : ""}
-            onClick={() => handleTabClick("reading")}
+            onClick={() => setActiveTab("reading")}
           >
             Reading
           </button>
           <button
             className={activeTab === "read" ? "active" : ""}
-            onClick={() => handleTabClick("read")}
+            onClick={() => setActiveTab("read")}
           >
             Read
           </button>
@@ -303,133 +162,23 @@ const Books = () => {
           <table className="books-table">
             <thead>
               <tr>
-                <th>Cover</th>
                 <th>Title</th>
                 <th>Author</th>
-                <th>Average Rating</th>
-                <th>Your Rating</th>
-
-                {activeTab === "reading" && <th>Date Started</th>}
-                {activeTab === "read" && <th> Date Finished </th>}
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentBooks.map((book) => (
-                <tr key={book.bookId}>
-                  <td>
-                    <img
-                      src={book.cover}
-                      alt={book.title}
-                      className="book-cover"
-                    />
-                  </td>
+                <tr key={book.id}>
                   <td>{book.title}</td>
                   <td>{book.author}</td>
-                  <td>{book.avgRating}</td>
                   <td>
-                    <StarRating
-                      mediaId={book.bookId}
-                      onRatingChange={handleUserRatingChange}
-                      initialRating={book.userRating}
-                    />
-                  </td>
-
-                  {activeTab === "reading" && (
-                    <td>
-                      {editingStartDate === book.bookId ? (
-                        <input
-                          type="date"
-                          value={book.startDate || ""}
-                          onChange={(e) =>
-                            handleDateChange(
-                              book.bookId,
-                              "startDate",
-                              e.target.value
-                            )
-                          }
-                          onBlur={() => setEditingStartDate(null)}
-                        />
-                      ) : (
-                        <span onClick={() => setEditingStartDate(book.bookId)}>
-                          {book.startDate && !isNaN(Date.parse(book.startDate))
-                            ? format(new Date(book.startDate), "dd/MM/yyyy")
-                            : "N/A"}
-                        </span>
-                      )}
-                    </td>
-                  )}
-
-                  {activeTab === "read" && (
-                    <td>
-                      {editingEndDate === book.bookId ? (
-                        <input
-                          type="date"
-                          value={book.endDate || ""}
-                          onChange={(e) =>
-                            handleDateChange(
-                              book.bookId,
-                              "endDate",
-                              e.target.value
-                            )
-                          }
-                          onBlur={() => setEditingEndDate(null)}
-                        />
-                      ) : (
-                        <span onClick={() => setEditingEndDate(book.bookId)}>
-                          {book.endDate && !isNaN(Date.parse(book.endDate))
-                            ? format(new Date(book.endDate), "dd/MM/yyyy")
-                            : "N/A"}
-                        </span>
-                      )}
-                    </td>
-                  )}
-
-                  <td>
-                    {activeTab === "wantToRead" && (
-                      <button
-                        className="details-books-button"
-                        onClick={() => handleMoveToReading(book)}
-                      >
-                        <FaCheckCircle /> Move to Reading
-                      </button>
-                    )}
-                    {activeTab === "reading" && (
-                      <button
-                        className="details-books-button"
-                        onClick={() => handleMarkAsRead(book)}
-                      >
-                        <FaCheckCircle /> Mark as Read
-                      </button>
-                    )}
-                    <button
-                      className="details-books-button"
-                      onClick={() => handleBookClick(book.bookId)}
-                    >
-                      <FaEye />
+                    <button onClick={() => handleFavoriteToggle(book)}>
+                      {favorites.includes(book.id) ? "Unfavorite" : "Favorite"}
                     </button>
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDeleteBook(book)}
-                    >
-                      <FaTrashAlt />
+                    <button onClick={() => handleDeleteBook(book.id)}>
+                      Delete
                     </button>
-                    {activeTab === "read" && (
-                      <button
-                        className="details-books-button"
-                        onClick={() => toggleFavorite(book)}
-                      >
-                        <FaHeart
-                          color={
-                            favorites.some(
-                              (favBook) => favBook.bookId === book.bookId
-                            )
-                              ? "red"
-                              : "gray"
-                          }
-                        />
-                      </button>
-                    )}
                   </td>
                 </tr>
               ))}
@@ -440,17 +189,9 @@ const Books = () => {
 
       <Recommended
         recommendedMedia={recommendedBooks}
-        mediaType="book"
         handleAddMedia={handleAddBookFromSearch}
       />
-      {selectedBookId && (
-        <MediaDetails
-          mediaId={selectedBookId}
-          mediaType="book"
-          onClose={handleCloseDetails}
-        />
-      )}
-    </>
+    </div>
   );
 };
 

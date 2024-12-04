@@ -53,7 +53,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-page-modern">
+    <div className="profile-page">
       <h2>MY PROFILE</h2>
       <div className="profile-card">
         <div className="profile-header">
